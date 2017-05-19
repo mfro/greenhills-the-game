@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        
+        "alwaysStrict": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": false,
+        "noImplicitThis": true,
+
+        "outDir": "temp",
+
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "src/*",
+                "*"
+            ]
+        }
+    },
+    
+    "exclude": [
+        "node_modules"
+    ],
+
+    "include": [
+        "./declare/**/*d.ts",
+        "./src/**/*.ts"
+    ]
+}
