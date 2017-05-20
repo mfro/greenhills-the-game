@@ -1,8 +1,8 @@
 import * as pixi from 'pixi.js';
 
 import * as gui from 'gui';
+import * as app from 'app';
 import * as mouse from 'input/mouse';
-import * as lifecycle from 'lifecycle';
 
 import * as construction from 'construction/controls';
 
@@ -17,13 +17,13 @@ toolbar.addChildAt(background, 0);
 
 let contents = Array<ToolbarItem>();
 
-lifecycle.hook('init', 'gui-toolbar', app => {
+app.hook('init', 'gui-toolbar', () => {
     gui.addObject(toolbar);
 
-    toolbar.position.set(0, app.view.height - 60);
+    toolbar.position.set(0, app.height - 60);
 
     background.beginFill(0xFFFFFF, 0.75);
-    background.drawRect(0, 0, app.view.width, 60);
+    background.drawRect(0, 0, app.width, 60);
     background.endFill();
 
     let index = 0;
@@ -40,7 +40,7 @@ lifecycle.hook('init', 'gui-toolbar', app => {
 mouse.on('down', 0, e => {
     if (e.handled) return;
 
-    e.handled = e.position.y >= lifecycle.app.view.height - 60;
+    e.handled = e.position.y >= app.height - 60;
 
     for (let item of contents) {
         if (item.contains(e.position)) {
@@ -90,7 +90,7 @@ class MaterialToolbarItem extends ToolbarItem {
     }
 
     public contains(pos: Vector) {
-        return pos.x >= this.index * 60 && pos.x < (this.index + 1) * 60 && pos.y > lifecycle.app.view.height - 60;
+        return pos.x >= this.index * 60 && pos.x < (this.index + 1) * 60 && pos.y > app.height - 60;
     }
 
     public update() {

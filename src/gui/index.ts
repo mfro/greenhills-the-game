@@ -1,5 +1,5 @@
 import * as pixi from 'pixi.js';
-import * as lifecycle from 'lifecycle';
+import * as app from 'app';
 
 import Vector from 'math/vector';
 
@@ -8,7 +8,7 @@ import './toolbar';
 
 let container = new pixi.Container();
 
-lifecycle.hook('init', 'gui', app => {
+app.hook('init', 'gui', () => {
     app.stage.addChildAt(container, 1000);
 });
 

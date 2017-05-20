@@ -1,5 +1,6 @@
+import * as app from 'app';
+
 import Vector from 'math/vector';
-import * as lifecycle from 'lifecycle';
 
 import { EventEmitter } from 'eventemitter3';
 
@@ -32,8 +33,8 @@ export interface MouseButtonEvent extends MouseEvent {
 let node: HTMLCanvasElement;
 let events = new Map<string, Array<EventHandler>>();
 
-lifecycle.hook('init', 'mouse', app => {
-    node = app.view;
+app.hook('init', 'mouse', () => {
+    node = app.canvas;
 
     node.addEventListener('mousemove', e => {
         position = new Vector(e.offsetX, e.offsetY);

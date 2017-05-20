@@ -1,10 +1,10 @@
 import * as pixi from 'pixi.js';
 import * as camera from 'camera';
-import * as lifecycle from 'lifecycle';
+import * as app from 'app';
 
 import * as input from 'input/world';
 
-lifecycle.hook('init', 'create-world', app => {
+app.hook('init', 'create-world', () => {
     let hover = new pixi.Graphics();
 
     camera.addObject(hover, 100);

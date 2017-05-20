@@ -1,6 +1,7 @@
 import * as pixi from 'pixi.js';
+
+import * as app from 'app';
 import * as camera from 'camera';
-import * as lifecycle from 'lifecycle';
 
 import * as world from 'world';
 import * as blocks from 'world/blocks';
@@ -38,7 +39,7 @@ export function update(pos: Vector) {
     tiles[pos.x][pos.y].update();
 }
 
-lifecycle.hook('init', 'create-world', app => {
+app.hook('init', 'create-world', () => {
     for (let x = 0; x < world.size.x; x++) {
         tiles[x] = new Array<Tile>();
 

@@ -1,6 +1,5 @@
 import * as pixi from 'pixi.js';
 import * as camera from 'camera';
-import * as lifecycle from 'lifecycle';
 
 import * as input from 'input/world';
 

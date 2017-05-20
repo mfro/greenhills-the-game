@@ -1,5 +1,5 @@
 import * as pixi from 'pixi.js';
-import * as lifecycle from 'lifecycle';
+import * as app from 'app';
 
 import * as mouse from 'input/mouse';
 import * as keyboard from 'input/keyboard';
@@ -9,7 +9,6 @@ import * as world from 'world';
 import Spring from 'math/spring';
 import Vector from 'math/vector';
 
-let app: pixi.Application;
 let container = new pixi.Container();
 
 let scale: Spring.Number;
@@ -20,7 +19,7 @@ export function addObject<T extends pixi.DisplayObject>(o: T, index: number) {
 }
 
 export function transform(point: Vector) {
-    let center = new Vector(app.view.width, app.view.height).scale(0.5);
+    let center = new Vector(app.width, app.height).scale(0.5);
 
     point = point.add(center.scale(-1));
     point = point.scale(1 / scale.value);
@@ -29,8 +28,7 @@ export function transform(point: Vector) {
     return point;
 }
 
-lifecycle.hook('init', 'camera', a => {
-    app = a;
+app.hook('init', 'camera', a => {
     app.renderer.on('prerender', update);
 
     scale = new Spring.Number(32);
@@ -66,7 +64,7 @@ function update() {
 
     position.target = position.target.add(delta);
 
-    let center = new Vector(app.view.width, app.view.height).scale(0.5);
+    let center = new Vector(app.width, app.height).scale(0.5);
     let offset = position.value.scale(-scale.value).add(center);
 
     container.scale.set(scale.value);

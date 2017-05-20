@@ -1,7 +1,8 @@
 import * as pixi from 'pixi.js';
+
+import * as app from 'app';
 import * as mouse from 'input/mouse';
 import * as camera from 'camera';
-import * as lifecycle from 'lifecycle';
 
 import * as world from 'world';
 import * as blocks from 'world/blocks';
@@ -140,6 +141,6 @@ function compute() {
     return { min, max };
 }
 
-lifecycle.hook('init', 'controls/building', app => {
-    app.ticker.add(update);
+app.hook('init', 'controls/building', () => {
+    app.renderer.on('prerender', update);
 });
