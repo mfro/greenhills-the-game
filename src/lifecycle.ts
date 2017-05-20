@@ -22,6 +22,8 @@ declare type ApplicationEvent = 'init' | 'start';
 declare type Callback = (app: PIXI.Application) => void;
 declare type HookArgs = { name: string, after: string[] };
 
+export let app: PIXI.Application;
+
 export function hook<T extends keyof ApplicationEvents>(e: T, name: string, callback: ApplicationEventCallback<T>): void
 export function hook<T extends keyof ApplicationEvents>(e: T, arg: HookArgs, callback: ApplicationEventCallback<T>): void
 export function hook<T extends keyof ApplicationEvents>(e: T, arg: string | HookArgs, callback: ApplicationEventCallback<T>) {
@@ -46,7 +48,10 @@ export function hook<T extends keyof ApplicationEvents>(e: T, arg: string | Hook
     });
 }
 
-export function emit(e: ApplicationEvent, app: PIXI.Application) {
+export function emit<T extends keyof ApplicationEvents>(e: T, arg: ApplicationEvents[T]) {
+    if (e == 'init')
+        app = arg as PIXI.Application;
+
     let list = events.get(e);
     if (!list) return;
 
@@ -69,5 +74,5 @@ function call(list: Listener[], item: Listener, app: PIXI.Application) {
 
     console.debug('Applying ' + item.name);
     item.done = true;
-    item.callback(app); 
+    item.callback(app);
 }

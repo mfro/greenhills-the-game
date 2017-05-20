@@ -5,7 +5,10 @@ import './util/math';
 import './util/container';
 
 import './html';
+
+import './gui';
 import './world';
+
 import './debug';
 
 import './construction';

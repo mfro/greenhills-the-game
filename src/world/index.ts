@@ -6,38 +6,25 @@ import * as input from 'input/world';
 
 import Vector from 'math/vector';
 
-import FloorMaterial from './floor-material';
-import FloorTile from './floor-tile';
-
-let floorTiles = new Array<Array<FloorTile>>();
-let floorContainer = new pixi.Container();
-
-let hover = new pixi.Graphics();
+import * as blocks from './blocks'
+import * as foundations from './foundations';
 
 export const size = new Vector(100, 100);
 
-export function setFloorTile(x: number, y: number, material: FloorMaterial) {
-    if (floorTiles[x][y]) {
-        if (floorTiles[x][y].material == material) return;
-        
-        floorContainer.removeChild(floorTiles[x][y].sprite);
+export function update(pos: Vector) {
+    for (let x = Math.max(0, pos.x - 1); x < Math.min(size.x, pos.x + 2); x++) {
+        for (let y = Math.max(0, pos.y - 1); y < Math.min(size.y, pos.y + 2); y++) {
+
+            let v = new Vector(x, y);
+            blocks.update(v);
+            foundations.update(v);
+        }
     }
-
-    floorTiles[x][y] = new FloorTile(material, new Vector(x, y));
-
-    floorContainer.addChildAt(floorTiles[x][y].sprite, 0);
 }
 
 lifecycle.hook('init', 'create-world', app => {
-    for (let x = 0; x < size.x; x++) {
-        floorTiles[x] = new Array<FloorTile>();
+    let hover = new pixi.Graphics();
 
-        for (let y = 0; y < size.y; y++) {
-            setFloorTile(x, y, FloorMaterial.GRASS);
-        }
-    }
-
-    camera.addObject(floorContainer, 0);
     camera.addObject(hover, 100);
 
     hover.beginFill(0xFF0000, 0.2);

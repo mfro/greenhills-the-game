@@ -24,9 +24,13 @@ namespace Spring {
         public get value() { return this._value; }
         public target: Point;
 
-        constructor(x: number, y: number) {
-            this._value = new Point(x, y);
-            this.target = this.value;
+        constructor(value: Point)
+        constructor(x: number, y: number)
+        constructor(x: number | Point, y?: number) {
+            if (x instanceof Point)
+                this._value = this.target = x;
+            else
+                this._value = this.target = new Point(x, y);
         }
 
         public update() {

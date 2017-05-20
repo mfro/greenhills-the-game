@@ -1,50 +1,43 @@
 import * as pixi from 'pixi.js';
+import * as texture from 'texture';
 
 let rsrc = require.context('../../resources', true, /\.png$/);
 
 interface Material {
     id: string;
-
-    textures: Array<pixi.Texture>;
+    type: Material.Type;
+    isPlaceable: boolean;
+    thumbnail: pixi.Texture;
 }
 
-let canvas = document.createElement('canvas');
-canvas.width = 1;
-canvas.height = 1;
-let context = canvas.getContext('2d');
-context.fillStyle = 'red';
-context.fillRect(0, 0, 10, 10);
-
 namespace Material {
+    export enum Type {
+        FOUNDATION,
+        BLOCK,
+        WALL,
+        OBJECT,
+    }
+
     export interface Definition {
         id: string;
-        texture: string;
+        type: Type;
+        isPlaceable: boolean;
     }
 
     export function define(def: Definition): Material {
-        let sprite = rsrc('./' + def.texture);
-
         let material = {
             id: def.id,
-            textures: Array<pixi.Texture>()
+            type: def.type,
+            isPlaceable: def.isPlaceable,
+            thumbnail: texture.placeholder,
         };
 
-        pixi.loader.add(sprite);
-        pixi.loader.on('complete', () => {
-            let atlas = pixi.loader.resources[sprite].texture;
-            let list = [];
+        allMaterials.push(material);
 
-            for (let x = 0; x < atlas.width; x += 64) {
-                for (let y = 0; y < atlas.height; y += 64) {
-                    list.push(new pixi.Texture(atlas.baseTexture, new pixi.Rectangle(x, y, 64, 64)));
-                }
-            }
-
-            material.textures = list;
-        });
-
-        return <Material>material;
+        return material;
     }
+
+    export const allMaterials = Array<Material>();
 }
 
 export default Material;

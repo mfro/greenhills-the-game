@@ -4,14 +4,16 @@ import * as lifecycle from 'lifecycle';
 import * as mouse from 'input/mouse';
 import * as keyboard from 'input/keyboard';
 
+import * as world from 'world';
+
 import Spring from 'math/spring';
 import Vector from 'math/vector';
 
 let app: pixi.Application;
 let container = new pixi.Container();
 
-let scale = new Spring.Number(64);
-let position = new Spring.Vector(0, 0);
+let scale: Spring.Number;
+let position: Spring.Vector;
 
 export function addObject<T extends pixi.DisplayObject>(o: T, index: number) {
     container.addChildAt(o, index);
@@ -30,6 +32,9 @@ export function transform(point: Vector) {
 lifecycle.hook('init', 'camera', a => {
     app = a;
     app.renderer.on('prerender', update);
+
+    scale = new Spring.Number(32);
+    position = new Spring.Vector(world.size.scale(0.5));
 
     app.stage.addChildAt(container, 0);
 });
