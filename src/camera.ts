@@ -39,7 +39,7 @@ lifecycle.hook('init', 'camera', a => {
     app.stage.addChildAt(container, 0);
 });
 
-mouse.on('scroll', delta => {
+mouse.on('scroll', 0, delta => {
     let ratio = delta > 0 ? 0.5 : 2;
     scale.target += -8 * Math.sign(delta);
 

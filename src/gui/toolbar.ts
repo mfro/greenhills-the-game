@@ -37,10 +37,15 @@ lifecycle.hook('init', 'gui-toolbar', app => {
     }
 });
 
-mouse.on('up', e => {
+mouse.on('down', 0, e => {
+    if (e.handled) return;
+
+    e.handled = e.position.y >= lifecycle.app.view.height - 60;
+
     for (let item of contents) {
-        if (item.contains(e.position))
+        if (item.contains(e.position)) {
             item.click();
+        }
     }
 });
 

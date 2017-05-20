@@ -30,7 +30,9 @@ export function setMaterial(mat: Material) {
 
 camera.addObject(graphics, 1000);
 
-mouse.on('down', e => {
+mouse.on('down', 1000, e => {
+    if (e.handled) return;
+
     if (start) {
         start = null;
         graphics.clear();
@@ -55,9 +57,13 @@ mouse.on('down', e => {
     if (start.x < 0 || start.y < 0 ||
         start.x >= world.size.x || start.y >= world.size.y)
         start = null;
+
+    e.handled = true;
 });
 
-mouse.on('up', e => {
+mouse.on('up', 1000, e => {
+    if (e.handled) return;
+
     if (!start) return;
 
     let { min, max } = compute();
@@ -96,20 +102,8 @@ mouse.on('up', e => {
             }
             break;
     }
-
-    if (e.button == 0) {
-        // for (let x = min.x; x <= max.x; x++) {
-        //     blocks.setTile(x, min.y, blocks.Material.CONCRETE);
-        //     blocks.setTile(x, max.y, blocks.Material.CONCRETE);
-        // }
-
-        // for (let y = min.y + 1; y <= max.y - 1; y++) {
-        //     blocks.setTile(min.x, y, blocks.Material.CONCRETE);
-        //     blocks.setTile(max.x, y, blocks.Material.CONCRETE);
-        // }
-
-    } else if (e.button == 2) {
-    }
+    
+    e.handled = true;
 });
 
 function update() {

@@ -14,8 +14,14 @@ interface Callback<T extends keyof Events> {
     (arg: Events[T]): void;
 }
 
+interface EventHandler {
+    priority: number;
+    callback: Callback<any>;
+}
+
 export interface MouseEvent {
     type: string;
+    handled: boolean;
     position: Vector;
 }
 
@@ -24,7 +30,7 @@ export interface MouseButtonEvent extends MouseEvent {
 }
 
 let node: HTMLCanvasElement;
-let events = new EventEmitter();
+let events = new Map<string, Array<EventHandler>>();
 
 lifecycle.hook('init', 'mouse', app => {
     node = app.view;
@@ -36,9 +42,10 @@ lifecycle.hook('init', 'mouse', app => {
     node.addEventListener('mousedown', e => {
         position = new Vector(e.offsetX, e.offsetY);
 
-        events.emit('down', {
+        emit('down', {
             type: 'down',
             button: e.button,
+            handled: false,
             position
         });
     });
@@ -46,20 +53,35 @@ lifecycle.hook('init', 'mouse', app => {
     node.addEventListener('mouseup', e => {
         position = new Vector(e.offsetX, e.offsetY);
         
-        events.emit('up', {
+        emit('up', {
             type: 'up',
             button: e.button,
+            handled: false,
             position
         });
     });
 
     node.addEventListener('mousewheel', e => {
-        events.emit('scroll', e.deltaY);
+        emit('scroll', e.deltaY);
     });
 });
 
 export let position = new Vector();
 
-export function on<T extends keyof Events>(e: T, cb: Callback<T>, context?: any) {
-    events.on(e, cb, context);
+export function on<T extends keyof Events>(e: T, priority: number, callback: Callback<T>) {
+    let list = events.get(e);
+    if (!list) events.set(e, list = []);
+
+    list.push({ priority, callback });
+
+    list.sort((a, b) => a.priority - b.priority);
+}
+
+function emit<T extends keyof Events>(e: T, arg: Events[T]) {
+    let list = events.get(e);
+    if (!list) return;
+
+    for (let handler of list) {
+        handler.callback(arg);
+    }
 }

@@ -3,6 +3,7 @@ import * as lifecycle from 'lifecycle';
 
 import Vector from 'math/vector';
 
+import './hover';
 import './toolbar';
 
 let container = new pixi.Container();
