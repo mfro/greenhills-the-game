@@ -85,7 +85,7 @@ function hitTest(start: Vector, end: Vector) {
     for (let x = min.x; x <= max.x; x++) {
         for (let y = min.y; y <= max.y; y++) {
             let block = blocks.getTile(x, y);
-            if (!block) continue;
+            if (!block.material.isSolid) continue;
 
             let top = intersect(new Vector(x, y), new Vector(x + 1, y), start, end);
             if (top) return true;
@@ -190,12 +190,12 @@ export function astar(start: Vector, end: Vector) {
         let current = openList.splice(lowInd, 1)[0];
 
         if (current.equals(end)) {
-            let path = [current.add({ x: 0.5, y: 0.5 })];
+            let path = [current.add(0.5, 0.5)];
             let node = grid.get(current);
 
             while (node.parent != null) {
                 current = node.parent;
-                path.unshift(current.add({ x: 0.5, y: 0.5 }));
+                path.unshift(current.add(0.5, 0.5));
                 node = grid.get(current);
             }
 
@@ -217,7 +217,7 @@ export function astar(start: Vector, end: Vector) {
                 continue;
 
             let block = blocks.getTile(neighbor.x, neighbor.y);
-            if (block && block.material.isSolid && !neighbor.equals(end))
+            if (block.material.isSolid && !neighbor.equals(end))
                 continue;
 
             let u = neighbor.x * world.size.x + neighbor.y;
@@ -254,7 +254,7 @@ export function gridLocked(from: Vector, to: Vector) {
         return null;
 
     let block = blocks.getTile(to.x, to.y);
-    if (block && block.material.isSolid)
+    if (block.material.isSolid)
         return null;
 
     let checked = new Set<number>();
@@ -287,7 +287,7 @@ export function gridLocked(from: Vector, to: Vector) {
         checked.add(u);
 
         let block = blocks.getTile(p.total.x, p.total.y);
-        if (block && block.material.isSolid)
+        if (block.material.isSolid)
             continue;
 
         for (let step of unitVectors) {

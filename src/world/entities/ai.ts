@@ -29,13 +29,15 @@ class AI<E extends Entity, S extends number> extends EventEmitter<Events<S>> {
 
         this._state = start;
         this.entity = entity;
+
+        setImmediate(() => this.emit('state', this.state));
     }
 
     public get state() { return this._state; }
     public set state(t: S) {
         this._state = t;
 
-        this.emit('state', t);
+        setImmediate(this.emit, 'state', t);
     }
 
     public onState(state: S, callback: () => void, context?: any) {
@@ -59,7 +61,7 @@ class AI<E extends Entity, S extends number> extends EventEmitter<Events<S>> {
         return <F><any>((...a: any[]) => {
             if (this.state != state) return;
 
-            fn(...a);
+            fn.bind(this)(...a);
         });
     }
 

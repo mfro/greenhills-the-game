@@ -26,15 +26,14 @@ class FoundationTile {
 
     public get material() { return this._material; }
     public set material(value: Material) {
-        let length = value.textures.length;
-        let index = Math.floor(Math.random() * length);
+        if (value == this.material) return;
 
         this._material = value;
-        this._sprite.texture = value.textures[index];
+        this._sprite.texture = value.getTexture();
     }
 
     public update() {
-        if (this.material == Material.GRASS && blocks.getTile(this.position.x, this.position.y) != null) {
+        if (this.material == Material.GRASS && blocks.getTile(this.position.x, this.position.y).material.isSolid) {
             this.material = Material.DIRT;
         }
     }

@@ -64,7 +64,7 @@ app.hook('prerender', 'camera', () => {
     else if (keyboard.isPressed(keyboard.RIGHT_ARROW) || keyboard.isPressed(keyboard.D))
         delta.x = ratio;
 
-    position.target = position.target.add(delta);
+    position.target = position.target.add(delta.x, delta.y);
 
     let center = new Vector(app.width, app.height).scale(0.5);
     let offset = position.value.scale(-scale.value).add(center);

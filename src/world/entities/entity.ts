@@ -7,7 +7,7 @@ import { EventEmitter } from 'eventemitter3';
 interface Events {
     idle: void;
     move: Vector;
-    update: void;
+    update: number;
 }
 
 class Entity extends EventEmitter<Events> {
@@ -38,7 +38,7 @@ class Entity extends EventEmitter<Events> {
     }
 
     public update(dT: number) {
-        this.emit('update');
+        this.emit('update', dT);
     }
 }
 

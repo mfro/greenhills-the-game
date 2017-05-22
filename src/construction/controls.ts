@@ -78,27 +78,18 @@ mouse.on('up', 1000, e => {
         case Action.PLACE:
             for (let x = min.x; x <= max.x; x++) {
                 for (let y = min.y; y <= max.y; y++) {
-                    let type: Job.Type;
+                    if (material instanceof blocks.Material &&
+                        blocks.getTile(x, y).material == material)
+                        continue;
 
-                    switch (material.type) {
-                        case Material.Type.Wall:
-                        case Material.Type.Block:
-                            if (blocks.getTile(x, y) && blocks.getTile(x, y).material == material)
-                                continue;
+                    if (material instanceof foundations.Material &&
+                        foundations.getTile(x, y).material == material)
+                        continue;
 
-                            type = Job.Type.Block;
-                            break;
-
-                        case Material.Type.Foundation:
-                            if (foundations.getTile(x, y).material == material)
-                                continue;
-
-                            type = Job.Type.Foundation;
-                            break;
-                    }
+                    if (construction.pending.filter(f => f.position.equals(new Vector(x, y)) && f.material == material).length > 0)
+                        continue;
 
                     jobs.push(new Job(
-                        type,
                         material,
                         new Vector(x, y)
                     ));
@@ -109,30 +100,26 @@ mouse.on('up', 1000, e => {
         case Action.DESTROY:
             for (let x = min.x; x <= max.x; x++) {
                 for (let y = min.y; y <= max.y; y++) {
-                    let type: Job.Type;
                     let mat: Material;
 
-                    switch (material.type) {
-                        case Material.Type.Wall:
-                        case Material.Type.Block:
-                            if (blocks.getTile(x, y) == null)
-                                continue;
-
-                            type = Job.Type.Block;
-                            mat = null;
-                            break;
-
-                        case Material.Type.Foundation:
-                            if (foundations.getTile(x, y).material == foundations.Material.DIRT)
-                                continue;
-
-                            type = Job.Type.Foundation;
-                            mat = foundations.Material.DIRT;
-                            break;
+                    if (material instanceof blocks.Material) {
+                        if (blocks.getTile(x, y).material == blocks.Material.AIR)
+                            continue;
+                        
+                        mat = blocks.Material.AIR;
                     }
 
+                    else if (material instanceof foundations.Material) {
+                        if (foundations.getTile(x, y).material == foundations.Material.DIRT)
+                            continue;
+                        
+                        mat = foundations.Material.DIRT;
+                    }
+
+                    if (construction.pending.filter(f => f.position.equals(new Vector(x, y)) && f.material == mat).length > 0)
+                        continue;
+
                     jobs.push(new Job(
-                        type,
                         mat,
                         new Vector(x, y)
                     ));

@@ -2,14 +2,9 @@ import * as pixi from 'pixi.js';
 
 let resources = require.context('../resources', true, /\.png$/);
 
-let canvas = document.createElement('canvas');
-canvas.width = 1;
-canvas.height = 1;
-let context = canvas.getContext('2d');
-context.fillStyle = 'red';
-context.fillRect(0, 0, 10, 10);
+export const placeholder = solid('red');
 
-export const placeholder = pixi.Texture.fromCanvas(canvas);
+export const transparent = solid('transparent');
 
 export function load(path: string, callback: (tex: pixi.Texture) => void) {
     let sprite = resources('./' + path);
@@ -20,4 +15,15 @@ export function load(path: string, callback: (tex: pixi.Texture) => void) {
 
         callback(texture);
     });
+}
+
+function solid(color: string) {
+    let canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    let context = canvas.getContext('2d');
+    context.fillStyle = color;
+    context.fillRect(0, 0, 10, 10);
+
+    return pixi.Texture.fromCanvas(canvas);
 }

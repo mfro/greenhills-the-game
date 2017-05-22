@@ -3,41 +3,45 @@ import * as texture from 'texture';
 
 import Material from '../material';
 
-interface FoundationMaterial extends Material {
-    isIndoor: boolean;
+interface Definition extends Material.Definition {
+    isIndoor?: boolean;
 
-    textures: Array<pixi.Texture>;
+    texture: string;
 }
 
-namespace FoundationMaterial {
-    interface Definition extends Material.Definition {
-        isIndoor?: boolean;
+class FoundationMaterial extends Material {
+    public readonly isIndoor: boolean;
 
-        texture: string;
-    }
+    private _textures: Array<pixi.Texture>;
 
-    function define(def: Definition): FoundationMaterial {
-        let material = Object.assign(Material.define(def), {
-            isIndoor: def.isIndoor || false,
-            textures: [texture.placeholder]
-        });
+    constructor(def: Definition) {
+        super(def);
+
+        this.isIndoor = def.isIndoor || false;
 
         texture.load(def.texture, atlas => {
-            material.textures.length = 0;
+            this._textures = [];
 
             for (let x = 0; x < atlas.width; x += 64) {
                 for (let y = 0; y < atlas.height; y += 64) {
-                    material.textures.push(new pixi.Texture(atlas.baseTexture, new pixi.Rectangle(x, y, 64, 64)));
+                    this._textures.push(new pixi.Texture(atlas.baseTexture, new pixi.Rectangle(x, y, 64, 64)));
                 }
             }
 
-            material.thumbnail = material.textures[0];
+            this.thumbnail = this._textures[0];
         });
-
-        return material;
     }
 
-    export const DIRT = define({
+    public getTexture() {
+        let length = this._textures.length;
+        let index = Math.floor(Math.random() * length);
+
+        return this._textures[index];
+    }
+}
+
+namespace FoundationMaterial {
+    export const DIRT = new FoundationMaterial({
         id: 'DIRT',
         texture: 'floors/dirt.png',
         type: Material.Type.Foundation,
@@ -45,7 +49,7 @@ namespace FoundationMaterial {
         isPlaceable: false
     });
 
-    export const GRASS = define({
+    export const GRASS = new FoundationMaterial({
         id: 'GRASS',
         texture: 'floors/grass.png',
         type: Material.Type.Foundation,
@@ -53,11 +57,11 @@ namespace FoundationMaterial {
         isPlaceable: true,
     });
 
-    export const CONCRETE = define({
+    export const CONCRETE = new FoundationMaterial({
         id: 'CONCRETE',
         texture: 'floors/concrete.png',
         type: Material.Type.Foundation,
-        
+
         isIndoor: true,
         isPlaceable: true
     });

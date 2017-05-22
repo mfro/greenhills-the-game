@@ -58,9 +58,18 @@ export function update(pos: Vector) {
     tile.update();
 }
 
-
 app.hook('init', 'blocks', () => {
     tiles = new Array2D<Tile>(world.size.x, world.size.y);
+
+    for (let x = 0; x < world.size.x; x++) {
+        for (let y = 0; y < world.size.y; y++) {
+            let tile = new Tile(Material.AIR, new Vector(x, y));
+
+            tiles.set(x, y, tile);
+
+            container.addChildAt(tile.sprite, 0);
+        }
+    }
     
     camera.addObject(container, 1);
 });

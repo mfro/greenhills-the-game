@@ -1,11 +1,6 @@
 import { Point } from 'pixi.js';
 
-interface IVector {
-    x: number;
-    y: number;
-}
-
-export default class Vector implements IVector {
+export default class Vector {
     public readonly x: number;
     public readonly y: number;
 
@@ -27,8 +22,16 @@ export default class Vector implements IVector {
         return new Vector(map(this.x), map(this.y));
     }
 
-    public add(v: IVector) {
-        return new Vector(this.x + v.x, this.y + v.y);
+    public add(x: number, y: number): Vector;
+    public add(v: Vector): Vector;
+    public add(a: number | Vector, b?: number) {
+        let x: number, y: number;
+        if (arguments.length == 1)
+            x = (a as Vector).x, y = (a as Vector).y;
+        else
+            x = a as number, y = b;
+        
+        return new Vector(this.x + x, this.y + y);
     }
 
     public scale(s: number) {
@@ -39,7 +42,7 @@ export default class Vector implements IVector {
         return '(' + this.x + ',' + this.y + ')';
     }
 
-    public equals(v: IVector) {
+    public equals(v: Vector) {
         return this.x == v.x && this.y == v.y;
     }
 

@@ -30,7 +30,7 @@ export function update(pos: Vector) {
 }
 
 app.hook('init', 'entities', () => {
-    camera.addObject(container, 2);
+    camera.addObject(container, 100);
 
     let entity1 = new Builder(new Vector(50.5, 50.5));
     addEntity(entity1);
