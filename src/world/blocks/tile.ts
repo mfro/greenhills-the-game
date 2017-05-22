@@ -2,15 +2,16 @@ import * as pixi from 'pixi.js';
 import * as blocks from 'world/blocks';
 import Vector from 'math/vector';
 
-import Material from './material';
+import Material from 'world/materials';
+import BlockMaterial from 'world/materials/block';
 
 class BlockTile {
-    public readonly material: Material;
+    public readonly material: BlockMaterial;
     public readonly sprite: pixi.Sprite;
 
     public readonly position: Vector;
 
-    constructor(material: Material, pos: Vector) {
+    constructor(material: BlockMaterial, pos: Vector) {
         this.material = material;
         this.position = pos;
 

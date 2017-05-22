@@ -9,7 +9,7 @@ import Vector from 'math/vector';
 import Array2D from 'math/array2d';
 import { EventEmitter } from 'eventemitter3';
 
-import Material from './material';
+import Material from 'world/materials';
 import Tile from './tile';
 
 const events = new EventEmitter<{
@@ -22,9 +22,7 @@ const container = new pixi.Container();
 export const on = events.on;
 export const once = events.once;
 
-export { Material, Tile };
-
-export function setTile(x: number, y: number, material: Material) {
+export function setTile(x: number, y: number, material: Material.Block) {
     if (x < 0 || x >= world.size.x || y < 0 || y >= world.size.y)
         throw new Error('Invalid coordinates: ' + x + ',' + y);
 

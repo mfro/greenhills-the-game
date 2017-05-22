@@ -1,20 +1,17 @@
 import * as pixi from 'pixi.js';
+
 import * as texture from 'texture';
+import * as blocks from 'world/blocks';
 
-import Material from '../material';
-
-interface Definition extends Material.Definition {
-    isIndoor?: boolean;
-
-    texture: string;
-}
+import Vector from 'math/vector';
+import Material from './material';
 
 class FoundationMaterial extends Material {
     public readonly isIndoor: boolean;
 
     private _textures: Array<pixi.Texture>;
 
-    constructor(def: Definition) {
+    constructor(def: FoundationMaterial.Definition) {
         super(def);
 
         this.isIndoor = def.isIndoor || false;
@@ -41,30 +38,10 @@ class FoundationMaterial extends Material {
 }
 
 namespace FoundationMaterial {
-    export const DIRT = new FoundationMaterial({
-        id: 'DIRT',
-        texture: 'floors/dirt.png',
-        type: Material.Type.Foundation,
-
-        isPlaceable: false
-    });
-
-    export const GRASS = new FoundationMaterial({
-        id: 'GRASS',
-        texture: 'floors/grass.png',
-        type: Material.Type.Foundation,
-
-        isPlaceable: true,
-    });
-
-    export const CONCRETE = new FoundationMaterial({
-        id: 'CONCRETE',
-        texture: 'floors/concrete.png',
-        type: Material.Type.Foundation,
-
-        isIndoor: true,
-        isPlaceable: true
-    });
+    export interface Definition extends Material.Definition {
+        isIndoor?: boolean;
+        texture: string;
+    }
 }
 
 export default FoundationMaterial;

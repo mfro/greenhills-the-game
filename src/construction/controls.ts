@@ -9,7 +9,7 @@ import * as blocks from 'world/blocks';
 import * as foundations from 'world/foundations';
 
 import Vector from 'math/vector';
-import Material from 'world/material';
+import Material from 'world/materials';
 
 import * as construction from 'construction';
 
@@ -26,7 +26,7 @@ let action: Action;
 
 let graphics = new pixi.Graphics();
 
-export let material: Material = blocks.Material.CONCRETE;
+export let material: Material = Material.CONCRETE_WALL;
 
 export function setMaterial(mat: Material) {
     material = mat;
@@ -78,7 +78,7 @@ mouse.on('up', 1000, e => {
         case Action.PLACE:
             for (let x = min.x; x <= max.x; x++) {
                 for (let y = min.y; y <= max.y; y++) {
-                    if (material instanceof blocks.Material &&
+                    if (material instanceof Material.Block &&
                         blocks.getTile(x, y).material == material)
                         continue;
 
@@ -102,18 +102,18 @@ mouse.on('up', 1000, e => {
                 for (let y = min.y; y <= max.y; y++) {
                     let mat: Material;
 
-                    if (material instanceof blocks.Material) {
-                        if (blocks.getTile(x, y).material == blocks.Material.AIR)
+                    if (material instanceof Material.Block) {
+                        if (blocks.getTile(x, y).material == Material.AIR)
                             continue;
-                        
-                        mat = blocks.Material.AIR;
+
+                        mat = Material.AIR;
                     }
 
-                    else if (material instanceof foundations.Material) {
-                        if (foundations.getTile(x, y).material == foundations.Material.DIRT)
+                    else if (material instanceof Material.Foundation) {
+                        if (foundations.getTile(x, y).material == Material.DIRT)
                             continue;
-                        
-                        mat = foundations.Material.DIRT;
+
+                        mat = Material.DIRT;
                     }
 
                     if (construction.pending.filter(f => f.position.equals(new Vector(x, y)) && f.material == mat).length > 0)
@@ -151,7 +151,7 @@ app.hook('init', 'construction/controls', () => {
 function compute() {
     end = camera.transform(mouse.position);
 
-    if (material.type == Material.Type.Wall && action == Action.PLACE) {
+    if (material instanceof Material.Wall && action == Action.PLACE) {
         let diag = end.add(start.scale(-1));
         if (Math.abs(diag.x) > Math.abs(diag.y))
             end = new Vector(end.x, start.y);

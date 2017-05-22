@@ -1,7 +1,7 @@
 import * as pixi from 'pixi.js';
 
 import Vector from 'math/vector';
-import Material from 'world/material';
+import Material from 'world/materials';
 
 class Job {
     public readonly material: Material;

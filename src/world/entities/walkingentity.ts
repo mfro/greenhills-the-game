@@ -20,7 +20,6 @@ class WalkingEntity extends Entity {
 
         world.on('change', () => {
             if (this.target) {
-                console.log('repathing...');
                 this.walkTo(this.target);
             }
         });

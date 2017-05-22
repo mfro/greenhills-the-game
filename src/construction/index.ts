@@ -9,6 +9,7 @@ import * as foundations from 'world/foundations';
 import './controls';
 import Job from './job';
 
+import Material from 'world/materials';
 import { EventEmitter } from 'eventemitter3';
 
 export const pending = new Array<Job>();
@@ -40,10 +41,10 @@ export function addJobs(jobs: Job[]) {
 }
 
 export function finish(job: Job) {
-    if (job.material instanceof blocks.Material)
+    if (job.material instanceof Material.Block)
         blocks.setTile(job.position.x, job.position.y, job.material);
 
-    else if (job.material instanceof foundations.Material)
+    else if (job.material instanceof Material.Foundation)
         foundations.setTile(job.position.x, job.position.y, job.material);
 
     container.removeChild(job.container);

@@ -7,7 +7,7 @@ import * as mouse from 'input/mouse';
 import * as construction from 'construction/controls';
 
 import Vector from 'math/vector';
-import Material from 'world/material';
+import Material from 'world/materials';
 
 let toolbar = new pixi.Container();
 

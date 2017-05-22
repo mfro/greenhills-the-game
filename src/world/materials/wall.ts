@@ -1,34 +1,18 @@
 import * as pixi from 'pixi.js';
 
 import * as texture from 'texture';
-import * as blocks from 'world/blocks'
+import * as blocks from 'world/blocks';
 
 import Vector from 'math/vector';
 
-import Material from '../material';
-
-interface Definition extends Material.Definition {
-    isSolid: boolean;
-    texture: string | pixi.Texture;
-}
-
-abstract class BlockMaterial extends Material {
-    public readonly isSolid: boolean;
-    public readonly isWall: boolean;
-
-    constructor(isWall: boolean, def: Definition) {
-        super(def);
-
-        this.isSolid = def.isSolid;
-        this.isWall = isWall;
-    }
-}
+import Material from './material';
+import BlockMaterial from './block';
 
 class WallMaterial extends BlockMaterial {
     private _atlas: pixi.Texture;
 
-    constructor(def: Definition) {
-        super(true, def);
+    constructor(def: WallMaterial.Definition) {
+        super(def);
 
         if (typeof def.texture == 'string')
             texture.load(def.texture, atlas => {
@@ -41,16 +25,11 @@ class WallMaterial extends BlockMaterial {
         }
     }
 
-    public getTexture(pos: Vector) {
+    public getTexture(pos: Vector): pixi.Texture {
         let top = blocks.getTile(pos.x, pos.y - 1).material == this;
         let left = blocks.getTile(pos.x - 1, pos.y).material == this;
         let right = blocks.getTile(pos.x + 1, pos.y).material == this;
         let bottom = blocks.getTile(pos.x, pos.y + 1).material == this;
-
-        // let top = topTile && topTile.material == this;
-        // let left = leftTile && leftTile.material == this;
-        // let right = rightTile && rightTile.material == this;
-        // let bottom = bottomTile && bottomTile.material == this;
 
         let coord: Vector;
 
@@ -108,44 +87,10 @@ class WallMaterial extends BlockMaterial {
     }
 }
 
-class BoringMaterial extends BlockMaterial {
-    private _texture: pixi.Texture;
-
-    constructor(def: Definition) {
-        super(false, def);
-
-        if (typeof def.texture == 'string')
-            texture.load(def.texture, atlas => {
-                this.thumbnail = this._texture = atlas;
-            });
-        else {
-            this.thumbnail = this._texture = def.texture;
-        }
-    }
-
-    public getTexture(position: Vector) {
-        return this._texture;
+namespace WallMaterial {
+    export interface Definition extends BlockMaterial.Definition {
+        texture: string;
     }
 }
 
-namespace BlockMaterial {
-    export const CONCRETE = new WallMaterial({
-        id: 'CONCRETE',
-        texture: 'walls/concrete.png',
-        type: Material.Type.Wall,
-
-        isSolid: true,
-        isPlaceable: true,
-    });
-
-    export const AIR = new BoringMaterial({
-        id: 'AIR',
-        texture: texture.transparent,
-        type: Material.Type.Block,
-
-        isSolid: false,
-        isPlaceable: false
-    });
-}
-
-export default BlockMaterial;
+export default WallMaterial;

@@ -9,7 +9,7 @@ import Vector from 'math/vector';
 import Array2D from 'math/array2d';
 import { EventEmitter } from 'eventemitter3';
 
-import Material from './material';
+import Material from 'world/materials';
 import Tile from './tile';
 
 const events = new EventEmitter<{
@@ -24,7 +24,7 @@ export const once = events.once;
 
 export { Material, Tile };
 
-export function setTile(x: number, y: number, material: Material) {
+export function setTile(x: number, y: number, material: Material.Foundation) {
     let tile = tiles.get(x, y);
 
     if (tile.material == material)

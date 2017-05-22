@@ -3,15 +3,16 @@ import * as blocks from 'world/blocks';
 
 import Vector from 'math/vector';
 
-import Material from './material';
+import Material from 'world/materials';
+import FoundationMaterial from 'world/materials/foundation';
 
 class FoundationTile {
-    private _material: Material;
+    private _material: FoundationMaterial;
     private _sprite: pixi.Sprite;
 
     public readonly position: Vector;
 
-    constructor(material: Material, pos: Vector) {
+    constructor(material: FoundationMaterial, pos: Vector) {
         this.position = pos;
 
         this._sprite = new pixi.Sprite();
@@ -25,7 +26,7 @@ class FoundationTile {
     public get sprite() { return this._sprite; }
 
     public get material() { return this._material; }
-    public set material(value: Material) {
+    public set material(value: FoundationMaterial) {
         if (value == this.material) return;
 
         this._material = value;
