@@ -4,12 +4,12 @@ import * as app from 'app';
 import * as camera from 'camera';
 
 import * as world from 'world';
+import * as materials from 'world/materials';
 
 import Vector from 'math/vector';
 import Array2D from 'math/array2d';
 import { EventEmitter } from 'eventemitter3';
 
-import Material from 'world/materials';
 import Tile from './tile';
 
 const events = new EventEmitter<{
@@ -22,7 +22,9 @@ const container = new pixi.Container();
 export const on = events.on;
 export const once = events.once;
 
-export function setTile(x: number, y: number, material: Material.Block) {
+export { Tile };
+
+export function setTile(x: number, y: number, material: materials.Block) {
     if (x < 0 || x >= world.size.x || y < 0 || y >= world.size.y)
         throw new Error('Invalid coordinates: ' + x + ',' + y);
 
@@ -37,15 +39,17 @@ export function setTile(x: number, y: number, material: Material.Block) {
     } else {
         let tile = new Tile(material, new Vector(x, y));
         tiles.set(x, y, tile);
-        
+
         container.addChildAt(tile.sprite, 0);
     }
 
     events.emit('change', new Vector(x, y));
 }
 
-export function getTile(x: number, y: number) {
-    return tiles.get(x, y);
+export function getTile(point: Vector): Tile
+export function getTile(x: number, y: number): Tile
+export function getTile(a: Vector | number, b?: number): Tile {
+    return tiles.get(a as any, b as any);
 }
 
 export function update(pos: Vector) {
@@ -61,13 +65,13 @@ app.hook('init', 'blocks', () => {
 
     for (let x = 0; x < world.size.x; x++) {
         for (let y = 0; y < world.size.y; y++) {
-            let tile = new Tile(Material.AIR, new Vector(x, y));
+            let tile = new Tile(materials.AIR, new Vector(x, y));
 
             tiles.set(x, y, tile);
 
             container.addChildAt(tile.sprite, 0);
         }
     }
-    
+
     camera.addObject(container, 1);
 });

@@ -2,6 +2,7 @@ import * as pixi from 'pixi.js';
 
 import * as texture from 'texture';
 import * as blocks from 'world/blocks';
+import * as foundations from 'world/foundations';
 
 import Vector from 'math/vector';
 
@@ -10,9 +11,14 @@ import BlockMaterial from './block';
 
 class WallMaterial extends BlockMaterial {
     private _atlas: pixi.Texture;
+    private _indoor: boolean;
+    private _outdoor: boolean;
 
     constructor(def: WallMaterial.Definition) {
         super(def);
+
+        this._indoor = def.indoor;
+        this._outdoor = def.outdoor;
 
         if (typeof def.texture == 'string')
             texture.load(def.texture, atlas => {
@@ -23,6 +29,12 @@ class WallMaterial extends BlockMaterial {
             this._atlas = def.texture;
             this.thumbnail = new pixi.Texture(this._atlas.baseTexture, new pixi.Rectangle(192, 192, 64, 64));
         }
+    }
+
+    public isPlaceable(pos: Vector): boolean {
+        let floor = foundations.getTile(pos.x, pos.y);
+
+        return (floor.material.isIndoor && this._indoor) || (!floor.material.isIndoor && this._outdoor);
     }
 
     public getTexture(pos: Vector): pixi.Texture {
@@ -90,6 +102,8 @@ class WallMaterial extends BlockMaterial {
 namespace WallMaterial {
     export interface Definition extends BlockMaterial.Definition {
         texture: string;
+        indoor: boolean;
+        outdoor: boolean;
     }
 }
 

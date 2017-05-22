@@ -4,10 +4,10 @@ import * as gui from 'gui';
 import * as app from 'app';
 import * as mouse from 'input/mouse';
 
+import * as materials from 'world/materials';
 import * as construction from 'construction/controls';
 
 import Vector from 'math/vector';
-import Material from 'world/materials';
 
 let toolbar = new pixi.Container();
 
@@ -26,13 +26,17 @@ app.hook('init', 'gui-toolbar', () => {
     background.drawRect(0, 0, app.width, 60);
     background.endFill();
 
+    let tools = [
+        materials.CONCRETE_WALL,
+        materials.DIRT,
+        materials.GRASS,
+        materials.CONCRETE_FLOOR,
+    ];
+
     let index = 0;
-    for (let material of Material.allMaterials) {
-        if (!material.isPlaceable) continue;
-
-        let item = new MaterialToolbarItem(material, index++);
+    for (let i = 0; i < tools.length; i++) {
+        let item = new MaterialToolbarItem(tools[i], i);
         contents.push(item);
-
         toolbar.addChildAt(item.container, 1);
     }
 });
@@ -63,13 +67,13 @@ abstract class ToolbarItem {
 
 class MaterialToolbarItem extends ToolbarItem {
     public readonly index: number;
-    public readonly material: Material;
+    public readonly material: materials.Base;
     public readonly container = new pixi.Container();
 
     private _background = new pixi.Graphics();
     private _sprite: pixi.Sprite;
 
-    constructor(material: Material, index: number) {
+    constructor(material: materials.Base, index: number) {
         super();
 
         this.index = index;
@@ -94,12 +98,12 @@ class MaterialToolbarItem extends ToolbarItem {
     }
 
     public update() {
+        this._background.clear();
+
         if (this.material == construction.material) {
             this._background.beginFill(0x0000EE, 0.5);
             this._background.drawRect(6, 6, 48, 48);
             this._background.endFill();
-        } else {
-            this._background.clear();
         }
     }
 

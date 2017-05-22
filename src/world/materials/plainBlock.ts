@@ -22,6 +22,10 @@ class PlainBlockMaterial extends BlockMaterial {
         }
     }
 
+    public isPlaceable(pos: Vector) {
+        return true;
+    }
+
     public getTexture(pos: Vector) {
         return this._texture;
     }

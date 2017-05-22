@@ -1,10 +1,10 @@
 import * as pixi from 'pixi.js';
 
+import * as materials from 'world/materials';
 import Vector from 'math/vector';
-import Material from 'world/materials';
 
 class Job {
-    public readonly material: Material;
+    public readonly material: materials.Base;
 
     public readonly position: Vector;
     public readonly container = new pixi.Container();
@@ -19,7 +19,7 @@ class Job {
         this._update();
     }
 
-    constructor(material: Material, position: Vector) {
+    constructor(material: materials.Base, position: Vector) {
         this.material = material;
         this.position = position;
 

@@ -8,12 +8,14 @@ import Material from './material';
 
 abstract class BlockMaterial extends Material {
     public readonly isSolid: boolean;
-    
+
     constructor(def: BlockMaterial.Definition) {
         super(def);
 
         this.isSolid = def.isSolid;
     }
+
+    public update(tile: blocks.Tile) { }
 }
 
 namespace BlockMaterial {

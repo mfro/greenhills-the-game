@@ -16,11 +16,11 @@ class Array2D<T> {
     public get(a: Vector | number, b?: number): T {
         let x: number, y: number;
 
-        if (arguments.length == 1) {
-            x = (a as Vector).x;
-            y = (a as Vector).y;
+        if (a instanceof Vector) {
+            x = a.x;
+            y = a.y;
         } else {
-            x = a as number;
+            x = a;
             y = b;
         }
 

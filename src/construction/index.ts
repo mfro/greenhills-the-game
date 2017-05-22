@@ -3,13 +3,13 @@ import * as pixi from 'pixi.js';
 import * as app from 'app';
 import * as camera from 'camera';
 
+import * as materials from 'world/materials';
 import * as blocks from 'world/blocks';
 import * as foundations from 'world/foundations';
 
 import './controls';
 import Job from './job';
 
-import Material from 'world/materials';
 import { EventEmitter } from 'eventemitter3';
 
 export const pending = new Array<Job>();
@@ -41,10 +41,10 @@ export function addJobs(jobs: Job[]) {
 }
 
 export function finish(job: Job) {
-    if (job.material instanceof Material.Block)
+    if (job.material instanceof materials.Block)
         blocks.setTile(job.position.x, job.position.y, job.material);
 
-    else if (job.material instanceof Material.Foundation)
+    else if (job.material instanceof materials.Foundation)
         foundations.setTile(job.position.x, job.position.y, job.material);
 
     container.removeChild(job.container);

@@ -1,9 +1,9 @@
 import * as pixi from 'pixi.js';
 import * as blocks from 'world/blocks';
+import * as materials from 'world/materials';
 
 import Vector from 'math/vector';
 
-import Material from 'world/materials';
 import FoundationMaterial from 'world/materials/foundation';
 
 class FoundationTile {
@@ -34,9 +34,7 @@ class FoundationTile {
     }
 
     public update() {
-        if (this.material == Material.GRASS && blocks.getTile(this.position.x, this.position.y).material.isSolid) {
-            this.material = Material.DIRT;
-        }
+        this.material.update(this);
     }
 }
 

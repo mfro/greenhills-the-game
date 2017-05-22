@@ -1,7 +1,7 @@
 import * as pixi from 'pixi.js';
 
 import * as texture from 'texture';
-import * as blocks from 'world/blocks';
+import * as foundations from 'world/foundations';
 
 import Vector from 'math/vector';
 import Material from './material';
@@ -27,6 +27,17 @@ class FoundationMaterial extends Material {
 
             this.thumbnail = this._textures[0];
         });
+    }
+
+    public update(tile: foundations.Tile) { }
+
+    public isPlaceable(pos: Vector) {
+        let floor = foundations.getTile(pos.x, pos.y);
+
+        if (floor.material == this)
+            return false;
+            
+        return true;
     }
 
     public getTexture() {

@@ -4,12 +4,12 @@ import * as app from 'app';
 import * as camera from 'camera';
 
 import * as world from 'world';
+import * as materials from 'world/materials';
 
 import Vector from 'math/vector';
 import Array2D from 'math/array2d';
 import { EventEmitter } from 'eventemitter3';
 
-import Material from 'world/materials';
 import Tile from './tile';
 
 const events = new EventEmitter<{
@@ -22,9 +22,9 @@ const container = new pixi.Container();
 export const on = events.on;
 export const once = events.once;
 
-export { Material, Tile };
+export { Tile };
 
-export function setTile(x: number, y: number, material: Material.Foundation) {
+export function setTile(x: number, y: number, material: materials.Foundation) {
     let tile = tiles.get(x, y);
 
     if (tile.material == material)
@@ -51,7 +51,7 @@ app.hook('init', 'foundations', () => {
 
     for (let x = 0; x < world.size.x; x++) {
         for (let y = 0; y < world.size.y; y++) {
-            let tile = new Tile(Material.GRASS, new Vector(x, y));
+            let tile = new Tile(materials.GRASS, new Vector(x, y));
 
             tiles.set(x, y, tile);
 
