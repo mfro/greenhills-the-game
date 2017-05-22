@@ -73,6 +73,7 @@ mouse.on('up', 1000, e => {
     start = null;
     graphics.clear();
 
+    let jobs = Array<Job>();
     switch (action) {
         case Action.PLACE:
             for (let x = min.x; x <= max.x; x++) {
@@ -96,7 +97,7 @@ mouse.on('up', 1000, e => {
                             break;
                     }
 
-                    construction.addJob(new Job(
+                    jobs.push(new Job(
                         type,
                         material,
                         new Vector(x, y)
@@ -130,7 +131,7 @@ mouse.on('up', 1000, e => {
                             break;
                     }
 
-                    construction.addJob(new Job(
+                    jobs.push(new Job(
                         type,
                         mat,
                         new Vector(x, y)
@@ -139,6 +140,8 @@ mouse.on('up', 1000, e => {
             }
             break;
     }
+
+    construction.addJobs(jobs);
 
     e.handled = true;
 });

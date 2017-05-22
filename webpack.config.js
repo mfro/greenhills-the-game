@@ -10,13 +10,14 @@ module.exports = {
 
     resolve: {
         modules: [
-            "node_modules",
             path.join(__dirname, "src"),
+            "node_modules",
         ],
         
         alias: {
             'pixi.js': 'pixi.js/dist/pixi.min.js',
-            'resources': path.join(__dirname, 'resources')
+            'resources': path.join(__dirname, 'resources'),
+            'eventemitter3': path.join(__dirname, 'include/eventemitter3'),
         },
 
         extensions: ['.js', '.ts']

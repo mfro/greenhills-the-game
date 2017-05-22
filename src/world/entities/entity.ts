@@ -4,7 +4,13 @@ import Vector from 'math/vector';
 
 import { EventEmitter } from 'eventemitter3';
 
-class Entity extends EventEmitter {
+interface Events {
+    idle: void;
+    move: Vector;
+    update: void;
+}
+
+class Entity extends EventEmitter<Events> {
     public readonly container = new pixi.Container();
     
     private _position: Vector;
@@ -27,10 +33,12 @@ class Entity extends EventEmitter {
     public set position(v: Vector) {
         this._position = v;
         this.container.position = this._position.toPoint();
+        
+        this.emit('move', this.position);
     }
 
     public update(dT: number) {
-        
+        this.emit('update');
     }
 }
 

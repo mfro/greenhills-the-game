@@ -7,13 +7,20 @@ import * as world from 'world';
 
 import Vector from 'math/vector';
 import Array2D from 'math/array2d';
+import { EventEmitter } from 'eventemitter3';
 
 import Material from './material';
 import Tile from './tile';
 
+const events = new EventEmitter<{
+    change: Vector;
+}>();
 
 let tiles: Array2D<Tile>;
-let container = new pixi.Container();
+const container = new pixi.Container();
+
+export const on = events.on;
+export const once = events.once;
 
 export { Material, Tile };
 
@@ -36,7 +43,7 @@ export function setTile(x: number, y: number, material: Material) {
         container.addChildAt(tile.sprite, 0);
     }
 
-    world.update(new Vector(x, y));
+    events.emit('change', new Vector(x, y));
 }
 
 export function getTile(x: number, y: number) {
@@ -50,6 +57,7 @@ export function update(pos: Vector) {
 
     tile.update();
 }
+
 
 app.hook('init', 'blocks', () => {
     tiles = new Array2D<Tile>(world.size.x, world.size.y);

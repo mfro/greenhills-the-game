@@ -2,7 +2,10 @@ import { EventEmitter } from 'eventemitter3';
 
 const pressed = new Set<number>();
 
-const events = new EventEmitter();
+const events = new EventEmitter<{
+    down: number;
+    up: number;  
+}>();
 
 declare type KeyEvent = 'down' | 'up';
 
@@ -19,16 +22,11 @@ export const
     S = 83,
     D = 68;
 
+export const on = events.on;
+export const once = events.once;
+
 export function isPressed(keys: number) {
     return pressed.has(keys);
-}
-
-export function once(key: number, event: KeyEvent, callback: (key: number) => void, context?: any) {
-    events.once(key + event, callback, context);
-}
-
-export function on(key: number, event: KeyEvent, callback: (key: number) => void, context?: any) {
-    events.on(key + event, callback, context);
 }
 
 window.addEventListener('keydown', e => {
@@ -36,11 +34,11 @@ window.addEventListener('keydown', e => {
 
     console.log(e.keyCode);
 
-    events.emit(e.keyCode + 'down', e.keyCode);
+    events.emit('down', e.keyCode);
     pressed.add(e.keyCode);
 });
 
 window.addEventListener('keyup', e => {
-    events.emit(e.keyCode + 'up', e.keyCode);
+    events.emit('up', e.keyCode);
     pressed.delete(e.keyCode);
 });

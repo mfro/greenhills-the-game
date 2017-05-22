@@ -4,17 +4,23 @@ import * as app from 'app';
 import * as camera from 'camera';
 
 import * as world from 'world';
-import * as blocks from 'world/blocks';
 
 import Vector from 'math/vector';
 import Array2D from 'math/array2d';
+import { EventEmitter } from 'eventemitter3';
 
 import Material from './material';
 import Tile from './tile';
 
+const events = new EventEmitter<{
+    change: Vector;
+}>();
 
 let tiles: Array2D<Tile>;
-let container = new pixi.Container();
+const container = new pixi.Container();
+
+export const on = events.on;
+export const once = events.once;
 
 export { Material, Tile };
 
@@ -26,7 +32,7 @@ export function setTile(x: number, y: number, material: Material) {
 
     tiles.get(x, y).material = material;
 
-    world.update(new Vector(x, y));
+    events.emit('change', new Vector(x, y));
 }
 
 export function getTile(x: number, y: number) {
