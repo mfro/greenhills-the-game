@@ -34,7 +34,7 @@ namespace BlockMaterial {
     export const CONCRETE = define({
         id: 'CONCRETE',
         texture: 'walls/concrete.png',
-        type: Material.Type.WALL,
+        type: Material.Type.Wall,
         
         isSolid: true,
         isWall: true,

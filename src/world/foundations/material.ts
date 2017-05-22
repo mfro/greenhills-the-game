@@ -40,7 +40,7 @@ namespace FoundationMaterial {
     export const DIRT = define({
         id: 'DIRT',
         texture: 'floors/dirt.png',
-        type: Material.Type.FOUNDATION,
+        type: Material.Type.Foundation,
 
         isPlaceable: false
     });
@@ -48,7 +48,7 @@ namespace FoundationMaterial {
     export const GRASS = define({
         id: 'GRASS',
         texture: 'floors/grass.png',
-        type: Material.Type.FOUNDATION,
+        type: Material.Type.Foundation,
 
         isPlaceable: true,
     });
@@ -56,7 +56,7 @@ namespace FoundationMaterial {
     export const CONCRETE = define({
         id: 'CONCRETE',
         texture: 'floors/concrete.png',
-        type: Material.Type.FOUNDATION,
+        type: Material.Type.Foundation,
         
         isIndoor: true,
         isPlaceable: true

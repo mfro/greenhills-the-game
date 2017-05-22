@@ -6,11 +6,14 @@ import * as camera from 'camera';
 
 import * as world from 'world';
 import * as blocks from 'world/blocks';
-import * as foundation from 'world/foundations';
-
-import Material from 'world/material';
+import * as foundations from 'world/foundations';
 
 import Vector from 'math/vector';
+import Material from 'world/material';
+
+import * as construction from 'construction';
+
+import Job from './job';
 
 enum Action {
     PLACE,
@@ -28,8 +31,6 @@ export let material: Material = blocks.Material.CONCRETE;
 export function setMaterial(mat: Material) {
     material = mat;
 }
-
-camera.addObject(graphics, 1000);
 
 mouse.on('down', 1000, e => {
     if (e.handled) return;
@@ -76,14 +77,30 @@ mouse.on('up', 1000, e => {
         case Action.PLACE:
             for (let x = min.x; x <= max.x; x++) {
                 for (let y = min.y; y <= max.y; y++) {
-                    if (material.type == Material.Type.BLOCK)
-                        blocks.setTile(x, y, material as blocks.Material);
+                    let type: Job.Type;
 
-                    else if (material.type == Material.Type.WALL)
-                        blocks.setTile(x, y, material as blocks.Material);
+                    switch (material.type) {
+                        case Material.Type.Wall:
+                        case Material.Type.Block:
+                            if (blocks.getTile(x, y) && blocks.getTile(x, y).material == material)
+                                continue;
 
-                    else if (material.type == Material.Type.FOUNDATION)
-                        foundation.setTile(x, y, material as foundation.Material);
+                            type = Job.Type.Block;
+                            break;
+
+                        case Material.Type.Foundation:
+                            if (foundations.getTile(x, y).material == material)
+                                continue;
+
+                            type = Job.Type.Foundation;
+                            break;
+                    }
+
+                    construction.addJob(new Job(
+                        type,
+                        material,
+                        new Vector(x, y)
+                    ));
                 }
             }
             break;
@@ -91,23 +108,42 @@ mouse.on('up', 1000, e => {
         case Action.DESTROY:
             for (let x = min.x; x <= max.x; x++) {
                 for (let y = min.y; y <= max.y; y++) {
-                    if (material.type == Material.Type.BLOCK)
-                        blocks.setTile(x, y, null);
+                    let type: Job.Type;
+                    let mat: Material;
 
-                    else if (material.type == Material.Type.WALL)
-                        blocks.setTile(x, y, null);
+                    switch (material.type) {
+                        case Material.Type.Wall:
+                        case Material.Type.Block:
+                            if (blocks.getTile(x, y) == null)
+                                continue;
 
-                    else if (material.type == Material.Type.FOUNDATION)
-                        foundation.setTile(x, y, foundation.Material.DIRT);
+                            type = Job.Type.Block;
+                            mat = null;
+                            break;
+
+                        case Material.Type.Foundation:
+                            if (foundations.getTile(x, y).material == foundations.Material.DIRT)
+                                continue;
+
+                            type = Job.Type.Foundation;
+                            mat = foundations.Material.DIRT;
+                            break;
+                    }
+
+                    construction.addJob(new Job(
+                        type,
+                        mat,
+                        new Vector(x, y)
+                    ));
                 }
             }
             break;
     }
-    
+
     e.handled = true;
 });
 
-function update() {
+app.hook('prerender', 'construction/controls', () => {
     if (!start) return;
 
     let { min, max } = compute();
@@ -116,12 +152,16 @@ function update() {
     graphics.beginFill(0xFF0000, 0.5);
     graphics.drawRect(min.x, min.y, max.x - min.x + 1, max.y - min.y + 1);
     graphics.endFill();
-}
+});
+
+app.hook('init', 'construction/controls', () => {
+    camera.addObject(graphics, 1000);
+});
 
 function compute() {
     end = camera.transform(mouse.position);
 
-    if (material.type == Material.Type.WALL && action == Action.PLACE) {
+    if (material.type == Material.Type.Wall && action == Action.PLACE) {
         let diag = end.add(start.scale(-1));
         if (Math.abs(diag.x) > Math.abs(diag.y))
             end = new Vector(end.x, start.y);
@@ -140,7 +180,3 @@ function compute() {
 
     return { min, max };
 }
-
-app.hook('init', 'controls/building', () => {
-    app.renderer.on('prerender', update);
-});

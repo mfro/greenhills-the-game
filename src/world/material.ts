@@ -12,10 +12,10 @@ interface Material {
 
 namespace Material {
     export enum Type {
-        FOUNDATION,
-        BLOCK,
-        WALL,
-        OBJECT,
+        Foundation,
+        Block,
+        Wall,
+        Object,
     }
 
     export interface Definition {

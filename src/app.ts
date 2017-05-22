@@ -15,6 +15,10 @@ interface ApplicationEvents {
     preload: void;
     init: void;
     start: void;
+
+    update: number;
+    prerender: void;
+    postrender: void;
 }
 
 interface ApplicationEventCallback<T extends keyof ApplicationEvents> {
@@ -30,7 +34,6 @@ let app = new pixi.Application(width, height);
 
 export let stage = app.stage;
 export let canvas = app.view;
-export let renderer = app.renderer;
 
 export function hook<T extends keyof ApplicationEvents>(e: T, name: string, callback: ApplicationEventCallback<T>): void
 export function hook<T extends keyof ApplicationEvents>(e: T, arg: HookArgs, callback: ApplicationEventCallback<T>): void
@@ -56,12 +59,16 @@ export function hook<T extends keyof ApplicationEvents>(e: T, arg: string | Hook
     });
 }
 
-export function emit<T extends keyof ApplicationEvents>(e: T, arg: ApplicationEvents[T]) {
+function emit<T extends keyof ApplicationEvents>(e: T, arg: ApplicationEvents[T]) {
     let list = events.get(e);
     if (!list) return;
 
     for (let item of list) {
         call(list, item, arg);
+    }
+
+    for (let item of list) {
+        item.done = false;
     }
 }
 
@@ -77,7 +84,6 @@ function call(list: Listener[], item: Listener, arg: any) {
         call(list, dep, arg);
     }
 
-    console.debug('Applying ' + item.name);
     item.done = true;
     item.callback(arg);
 }
@@ -93,5 +99,13 @@ window.addEventListener('load', () => {
 
     pixi.loader.load(() => {
         emit('init', null);
+
+        app.ticker.add(dT => {
+            dT = dT * (app.ticker.elapsedMS / 1000);
+            emit('update', dT);
+        });
+
+        app.renderer.on('prerender', () => emit('prerender', null));
+        app.renderer.on('postrender', () => emit('postrender', null));
     });
 });

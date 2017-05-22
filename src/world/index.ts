@@ -1,12 +1,11 @@
 import * as pixi from 'pixi.js';
-import * as camera from 'camera';
-
-import * as input from 'input/world';
 
 import Vector from 'math/vector';
 
 import * as blocks from './blocks'
 import * as foundations from './foundations';
+
+import * as entities from './entities';
 
 export const size = new Vector(100, 100);
 
@@ -17,6 +16,8 @@ export function update(pos: Vector) {
             let v = new Vector(x, y);
             blocks.update(v);
             foundations.update(v);
+
+            entities.update(v);
         }
     }
 }

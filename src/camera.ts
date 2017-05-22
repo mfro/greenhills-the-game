@@ -15,7 +15,11 @@ let scale: Spring.Number;
 let position: Spring.Vector;
 
 export function addObject<T extends pixi.DisplayObject>(o: T, index: number) {
-    container.addChildAt(o, index);
+    return container.addChildAt(o, index);
+}
+
+export function removeObject(o: pixi.DisplayObject) {
+    container.removeChild(o);
 }
 
 export function transform(point: Vector) {
@@ -29,8 +33,6 @@ export function transform(point: Vector) {
 }
 
 app.hook('init', 'camera', a => {
-    app.renderer.on('prerender', update);
-
     scale = new Spring.Number(32);
     position = new Spring.Vector(world.size.scale(0.5));
 
@@ -45,7 +47,7 @@ mouse.on('scroll', 0, delta => {
     scale.target = Math.max(scale.target, 8);
 });
 
-function update() {
+app.hook('prerender', 'camera', () => {
     scale.update();
     position.update();
 
@@ -69,4 +71,4 @@ function update() {
 
     container.scale.set(scale.value);
     container.position = offset.toPoint();
-}
+});
