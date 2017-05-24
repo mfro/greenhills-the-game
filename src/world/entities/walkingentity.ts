@@ -25,6 +25,12 @@ class WalkingEntity extends Entity {
         });
     }
 
+    public stop() {
+        this._next = null;
+        this._queue = null;
+        this._target = null;
+    }
+
     public walkTo(position: Vector) {
         let path = pathing.astar(this.position, position);
         if (!path) return false;

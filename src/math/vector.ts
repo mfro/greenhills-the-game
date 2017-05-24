@@ -1,6 +1,6 @@
 import { Point } from 'pixi.js';
 
-export default class Vector {
+class Vector {
     public readonly x: number;
     public readonly y: number;
 
@@ -30,7 +30,7 @@ export default class Vector {
             x = (a as Vector).x, y = (a as Vector).y;
         else
             x = a as number, y = b;
-        
+
         return new Vector(this.x + x, this.y + y);
     }
 
@@ -43,17 +43,29 @@ export default class Vector {
     }
 
     public equals(v: Vector) {
-        return this.x == v.x && this.y == v.y;
+        return Vector.equals(this, v);
+    }
+}
+
+namespace Vector {
+    export const zero = new Vector();
+
+    export const up = new Vector(0, -1);
+    export const down = new Vector(0, 1);
+    export const left = new Vector(-1, 0);
+    export const right = new Vector(1, 0);
+
+    export function equals(v1: Vector, v2: Vector) {
+        return v1.x == v2.x && v1.y == v2.y;
     }
 
-    private static _zero = new Vector();
-    public static get zero() { return Vector._zero; }
-
-    public static polar(dir: number, mag: number) {
+    export function polar(dir: number, mag: number) {
         return new Vector(mag * Math.cos(dir), mag * Math.sin(dir));
     }
 
-    public static min(v1: Vector, v2: Vector) {
+    export function min(v1: Vector, v2: Vector) {
         return v1.length > v2.length ? v2 : v1;
     }
 }
+
+export default Vector;

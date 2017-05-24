@@ -30,14 +30,14 @@ class AI<E extends Entity, S extends number> extends EventEmitter<Events<S>> {
         this._state = start;
         this.entity = entity;
 
-        setImmediate(() => this.emit('state', this.state));
+        setImmediate(() => this.pulse());
     }
 
     public get state() { return this._state; }
     public set state(t: S) {
         this._state = t;
 
-        setImmediate(this.emit, 'state', t);
+        setImmediate(() => this.pulse());
     }
 
     public onState(state: S, callback: () => void, context?: any) {
@@ -48,6 +48,10 @@ class AI<E extends Entity, S extends number> extends EventEmitter<Events<S>> {
                 callback();
             }
         });
+    }
+
+    protected pulse() {
+        this.emit('state', this.state);
     }
 
     protected switch<A>(args: { [id: number]: (a: A) => void }) {

@@ -19,9 +19,9 @@ class FoundationMaterial extends Material {
         texture.load(def.texture, atlas => {
             this._textures = [];
 
-            for (let x = 0; x < atlas.width; x += 64) {
-                for (let y = 0; y < atlas.height; y += 64) {
-                    this._textures.push(new pixi.Texture(atlas.baseTexture, new pixi.Rectangle(x, y, 64, 64)));
+            for (let x = 0; x < atlas.width; x += 33) {
+                for (let y = 0; y < atlas.height; y += 33) {
+                    this._textures.push(new pixi.Texture(atlas.baseTexture, new pixi.Rectangle(x, y, 33, 33)));
                 }
             }
 

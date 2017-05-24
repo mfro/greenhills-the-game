@@ -13,20 +13,15 @@ import * as materials from 'world/materials';
 
 import * as construction from 'construction';
 
-import Job from './job';
-
-enum Action {
-    PLACE,
-    DESTROY,
-}
+import * as jobs from './job';
 
 let start: Vector;
 let end: Vector;
-let action: Action;
+let action: (v: Vector) => jobs.Base;
 
 let graphics = new pixi.Graphics();
 
-export let material: materials.Base = materials.CONCRETE_WALL;
+export let material: materials.Base = materials.CINDERBLOCK_WALL;
 
 export function setMaterial(mat: materials.Base) {
     material = mat;
@@ -43,11 +38,11 @@ mouse.on('down', 1000, e => {
 
     switch (e.button) {
         case 0:
-            action = Action.PLACE;
+            action = place;
             break;
 
         case 2:
-            action = Action.DESTROY;
+            action = cancel;
             break;
 
         default: return;
@@ -73,42 +68,31 @@ mouse.on('up', 1000, e => {
     start = null;
     graphics.clear();
 
-    let jobs = Array<Job>();
+    let batch = Array<jobs.Base>();
     let mat: materials.Base;
 
-    if (action == Action.PLACE)
-        mat = material;
-        
-    else if (material instanceof materials.Block)
-        mat = materials.AIR;
+    // if (action == Action.PLACE)
+    //     mat = material;
 
-    else if (material instanceof materials.Foundation)
-        mat = materials.DIRT;
+    // else if (material instanceof materials.Block)
+    //     mat = materials.AIR;
+
+    // else if (material instanceof materials.Foundation)
+    //     mat = materials.DIRT;
+
+    // else if (material instanceof materials.Object)
+    //     mat = null;
 
     for (let x = min.x; x <= max.x; x++) {
         for (let y = min.y; y <= max.y; y++) {
-            if (material instanceof materials.Block &&
-                blocks.getTile(x, y).material == mat)
-                continue;
+            let job = action(new Vector(x, y));
+            if (!job) continue;
 
-            if (material instanceof materials.Foundation &&
-                foundations.getTile(x, y).material == mat)
-                continue;
-
-            if (!mat.isPlaceable(new Vector(x, y)))
-                continue;
-
-            if (construction.pending.filter(f => f.position.equals(new Vector(x, y)) && f.material == mat).length > 0)
-                continue;
-
-            jobs.push(new Job(
-                mat,
-                new Vector(x, y)
-            ));
+            batch.push(job);
         }
     }
 
-    construction.addJobs(jobs);
+    construction.addJobs(batch);
 
     e.handled = true;
 });
@@ -128,16 +112,63 @@ app.hook('init', 'construction/controls', () => {
     camera.addObject(graphics, 1000);
 });
 
+function place(v: Vector): jobs.Base {
+    if (!material.isPlaceable(v))
+        return;
+
+    if (construction.getJob(v) !== null)
+        return;
+
+    if (material instanceof materials.Block) {
+        if (blocks.getTile(v).material == material)
+            return;
+
+        return new jobs.BuildBlock(material, v);
+    }
+
+    else if (material instanceof materials.Foundation) {
+        if (foundations.getTile(v).material == material)
+            return;
+
+        return new jobs.BuildFoundation(material, v);
+    }
+
+    else if (material instanceof materials.Object) {
+        let job = new jobs.BuildObject(material, v, Vector.right);
+
+        let success = true;
+        for (let x = job.position.x; success && x < job.position.x + job.size.x; x++) {
+            for (let y = job.position.y; success && y < job.position.y + job.size.y; y++) {
+                success = world.isPassable(new Vector(x, y));
+            }
+        }
+
+        return success ? job : undefined;
+    }
+}
+
+function cancel(v: Vector): jobs.Base {
+    let job = construction.getJob(v);
+
+    if (job == null) return;
+
+    construction.cancel(job);
+}
+
 function compute() {
     end = camera.transform(mouse.position);
 
-    if (material instanceof materials.Wall && action == Action.PLACE) {
+    if (material instanceof materials.Wall && action == place) {
         let diag = end.add(start.scale(-1));
         if (Math.abs(diag.x) > Math.abs(diag.y))
             end = new Vector(end.x, start.y);
 
         else
             end = new Vector(start.x, end.y);
+    }
+
+    if (material instanceof materials.Object && action == place) {
+        end = start;
     }
 
     end = end.apply(Math.floor);

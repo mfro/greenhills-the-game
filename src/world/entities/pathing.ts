@@ -84,8 +84,8 @@ function hitTest(start: Vector, end: Vector) {
 
     for (let x = min.x; x <= max.x; x++) {
         for (let y = min.y; y <= max.y; y++) {
-            let block = blocks.getTile(x, y);
-            if (!block.material.isSolid) continue;
+            if (world.isPassable(new Vector(x, y)))
+                continue;
 
             let top = intersect(new Vector(x, y), new Vector(x + 1, y), start, end);
             if (top) return true;
@@ -215,9 +215,8 @@ export function astar(start: Vector, end: Vector) {
             if (neighbor.x < 0 || neighbor.x >= world.size.x ||
                 neighbor.y < 0 || neighbor.y >= world.size.y)
                 continue;
-
-            let block = blocks.getTile(neighbor.x, neighbor.y);
-            if (block.material.isSolid && !neighbor.equals(end))
+            
+            if (!world.isPassable(neighbor) && !neighbor.equals(end))
                 continue;
 
             let u = neighbor.x * world.size.x + neighbor.y;
@@ -245,59 +244,58 @@ export function astar(start: Vector, end: Vector) {
     return null;
 }
 
-export function gridLocked(from: Vector, to: Vector) {
-    if (to.equals(from))
-        return [];
+// export function gridLocked(from: Vector, to: Vector) {
+//     if (to.equals(from))
+//         return [];
 
-    if (to.x < 0 || to.x >= world.size.x ||
-        to.y < 0 || to.y >= world.size.y)
-        return null;
+//     if (to.x < 0 || to.x >= world.size.x ||
+//         to.y < 0 || to.y >= world.size.y)
+//         return null;
 
-    let block = blocks.getTile(to.x, to.y);
-    if (block.material.isSolid)
-        return null;
+//     if (!world.isPassable(to))
+//         return null;
 
-    let checked = new Set<number>();
-    let points = unitVectors.map(a => ({
-        from: null,
-        step: a,
-        total: from.add(a)
-    }));
+//     let checked = new Set<number>();
+//     let points = unitVectors.map(a => ({
+//         from: null,
+//         step: a,
+//         total: from.add(a)
+//     }));
 
-    while (points.length > 0) {
-        let p = points.shift();
+//     while (points.length > 0) {
+//         let p = points.shift();
 
-        if (p.total.equals(to)) {
-            let path = [];
-            while (p) {
-                path.unshift(p.total);
-                p = p.from;
-            }
-            return path;
-        }
+//         if (p.total.equals(to)) {
+//             let path = [];
+//             while (p) {
+//                 path.unshift(p.total);
+//                 p = p.from;
+//             }
+//             return path;
+//         }
 
-        if (p.total.x < 0 || p.total.x >= world.size.x ||
-            p.total.y < 0 || p.total.y >= world.size.y)
-            continue;
+//         if (p.total.x < 0 || p.total.x >= world.size.x ||
+//             p.total.y < 0 || p.total.y >= world.size.y)
+//             continue;
 
-        let u = p.total.x * world.size.x + p.total.y;
-        if (checked.has(u))
-            continue;
+//         let u = p.total.x * world.size.x + p.total.y;
+//         if (checked.has(u))
+//             continue;
 
-        checked.add(u);
+//         checked.add(u);
 
-        let block = blocks.getTile(p.total.x, p.total.y);
-        if (block.material.isSolid)
-            continue;
+//         let block = blocks.getTile(p.total.x, p.total.y);
+//         if (block.material.isSolid)
+//             continue;
 
-        for (let step of unitVectors) {
-            points.push({
-                from: p,
-                step: step,
-                total: p.total.add(step)
-            });
-        }
-    }
+//         for (let step of unitVectors) {
+//             points.push({
+//                 from: p,
+//                 step: step,
+//                 total: p.total.add(step)
+//             });
+//         }
+//     }
 
-    return null;
-}
+//     return null;
+// }

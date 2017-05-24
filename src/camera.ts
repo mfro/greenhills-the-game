@@ -33,7 +33,7 @@ export function transform(point: Vector) {
 }
 
 app.hook('init', 'camera', a => {
-    scale = new Spring.Number(32);
+    scale = new Spring.Number(33);
     position = new Spring.Vector(world.size.scale(0.5));
 
     app.stage.addChildAt(container, 0);
@@ -41,10 +41,12 @@ app.hook('init', 'camera', a => {
 
 mouse.on('scroll', 0, delta => {
     let ratio = delta > 0 ? 0.5 : 2;
-    scale.target += -8 * Math.sign(delta);
+    scale.target += -33 / 4 * Math.sign(delta);
 
-    scale.target = Math.min(scale.target, 64);
-    scale.target = Math.max(scale.target, 8);
+    scale.target = Math.min(scale.target, 66);
+    scale.target = Math.max(scale.target, 33 / 4);
+
+    console.log(scale.target);
 });
 
 app.hook('prerender', 'camera', () => {

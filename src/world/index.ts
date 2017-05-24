@@ -1,6 +1,7 @@
 import * as pixi from 'pixi.js';
 
 import * as blocks from './blocks'
+import * as objects from './objects';
 import * as foundations from './foundations';
 
 import * as entities from './entities';
@@ -19,6 +20,18 @@ const events = new EventEmitter<{
 
 export const on = events.on;
 export const once = events.once;
+
+export function isPassable(tile: Vector) {
+    let block = blocks.getTile(tile);
+    if (block.material.isSolid)
+        return false;
+
+    let obj = objects.getObject(tile);
+    if (obj != null)
+        return false;
+
+    return true;
+}
 
 blocks.on('change', update);
 foundations.on('change', update);

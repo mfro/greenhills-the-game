@@ -14,6 +14,7 @@ class GrassMaterial extends FoundationMaterial {
     constructor() {
         super({
             id: 'GRASS',
+            name: 'Grass',
             texture: 'floors/grass.png',
         });
     }

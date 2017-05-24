@@ -5,17 +5,19 @@ import * as camera from 'camera';
 
 import * as materials from 'world/materials';
 import * as blocks from 'world/blocks';
+import * as objects from 'world/objects';
 import * as foundations from 'world/foundations';
 
 import './controls';
-import Job from './job';
+import * as jobs from './job';
 
+import Vector from 'math/vector';
 import { EventEmitter } from 'eventemitter3';
 
-export const pending = new Array<Job>();
+export const active = new Array<jobs.Base>();
 
 const events = new EventEmitter<{
-    job: Job
+    job: jobs.Base
 }>();
 
 let container = new pixi.Container();
@@ -23,31 +25,54 @@ let container = new pixi.Container();
 export const on = events.on;
 export const once = events.once;
 
-export function addJob(job: Job) {
-    pending.push(job);
+export function addJob(job: jobs.Base) {
+    active.push(job);
     container.addChildAt(job.container, 0);
 
     events.emit('job', job);
+    job.on('state', () => events.emit('job', job));
 }
 
-export function addJobs(jobs: Job[]) {
-    pending.push(...jobs);
+export function addJobs(jobs: jobs.Base[]) {
+    active.push(...jobs);
 
     for (let job of jobs) {
         container.addChildAt(job.container, 0);
 
         events.emit('job', job);
+        job.on('state', () => events.emit('job', job));
     }
 }
 
-export function finish(job: Job) {
-    if (job.material instanceof materials.Block)
-        blocks.setTile(job.position.x, job.position.y, job.material);
+export function getJob(tile: Vector) {
+    for (let job of active) {
+        if (tile.x >= job.position.x && tile.x < job.position.x + job.size.x &&
+            tile.y >= job.position.y && tile.y < job.position.y + job.size.y) {
+            return job;
+        }
+    }
 
-    else if (job.material instanceof materials.Foundation)
-        foundations.setTile(job.position.x, job.position.y, job.material);
+    return null;
+}
 
+export function cancel(job: jobs.Base) {
+    job.state = jobs.State.CANCELLED;
+
+    remove(job);
+}
+
+export function finish(job: jobs.Base) {
+    job.state = jobs.State.COMPLETED;
+    job.finish();
+
+    remove(job);
+}
+
+function remove(job: jobs.Base) {
     container.removeChild(job.container);
+
+    let index = active.indexOf(job);
+    if (index >= 0) active.splice(index, 1);
 }
 
 app.hook('init', 'construction', () => {

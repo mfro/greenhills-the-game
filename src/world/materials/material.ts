@@ -7,10 +7,13 @@ let rsrc = require.context('../../../resources', true, /\.png$/);
 
 abstract class Material {
     public readonly id: string;
+    public readonly name: string;
+    
     public thumbnail: pixi.Texture;
 
     constructor(def: Material.Definition) {
         this.id = def.id;
+        this.name = def.name;
         this.thumbnail = texture.placeholder;
 
         Material.allMaterials.push(this);
@@ -27,6 +30,6 @@ namespace Material {
 
     export interface Definition {
         id: string;
-        // isPlaceable: boolean;
+        name: string;
     }
 }

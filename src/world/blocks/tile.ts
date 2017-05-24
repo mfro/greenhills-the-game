@@ -15,16 +15,23 @@ class BlockTile {
         this.position = pos;
 
         this.sprite = new pixi.Sprite();
-        this.sprite.position = this.position.toPoint();
-        this.sprite.width = 1;
-        this.sprite.height = 1;
+
+        let padding = 1 / 33 / 4;
+
+        // this.sprite.position = this.position.add(-1 / 66, -1 / 66).toPoint();
+        // this.sprite.width = 1 + 1 / 33;
+        // this.sprite.height = 1 + 1 / 33;
+        
+        this.sprite.position = this.position.apply(v => v - padding).toPoint();
+        this.sprite.width = 1 + padding * 2;
+        this.sprite.height = 1 + padding * 2;
 
         this.update();
     }
 
     public update() {
         this.sprite.texture = this.material.getTexture(this.position);
-        
+
         this.material.update(this);
     }
 }

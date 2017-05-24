@@ -23,11 +23,11 @@ class WallMaterial extends BlockMaterial {
         if (typeof def.texture == 'string')
             texture.load(def.texture, atlas => {
                 this._atlas = atlas;
-                this.thumbnail = new pixi.Texture(atlas.baseTexture, new pixi.Rectangle(192, 192, 64, 64));
+                this.thumbnail = new pixi.Texture(atlas.baseTexture, new pixi.Rectangle(33 * 3, 33 * 3, 33, 33));
             });
         else {
             this._atlas = def.texture;
-            this.thumbnail = new pixi.Texture(this._atlas.baseTexture, new pixi.Rectangle(192, 192, 64, 64));
+            this.thumbnail = new pixi.Texture(this._atlas.baseTexture, new pixi.Rectangle(33 * 3, 33 * 3, 33, 33));
         }
     }
 
@@ -67,10 +67,10 @@ class WallMaterial extends BlockMaterial {
             coord = new Vector(0, 2);
 
         else if (top && bottom)
-            coord = new Vector(3, 1);
+            coord = new Vector(3, 0);
 
         else if (left && right)
-            coord = new Vector(1, 3);
+            coord = new Vector(0, 3);
 
         else if (left && bottom)
             coord = new Vector(2, 0);
@@ -79,10 +79,10 @@ class WallMaterial extends BlockMaterial {
             coord = new Vector(0, 0);
 
         else if (top)
-            coord = new Vector(3, 2);
+            coord = new Vector(3, 0);
 
         else if (left)
-            coord = new Vector(2, 3);
+            coord = new Vector(0, 3);
 
         else if (right)
             coord = new Vector(0, 3);
@@ -93,7 +93,7 @@ class WallMaterial extends BlockMaterial {
         else
             coord = new Vector(3, 3);
 
-        let frame = new pixi.Rectangle(coord.x * 64, coord.y * 64, 64, 64);
+        let frame = new pixi.Rectangle(coord.x * 33, coord.y * 33, 33, 33);
 
         return new pixi.Texture(this._atlas.baseTexture, frame);
     }

@@ -35,8 +35,10 @@ export function setTile(x: number, y: number, material: materials.Foundation) {
     events.emit('change', new Vector(x, y));
 }
 
-export function getTile(x: number, y: number) {
-    return tiles.get(x, y);
+export function getTile(point: Vector): Tile
+export function getTile(x: number, y: number): Tile
+export function getTile(a: Vector | number, b?: number): Tile {
+    return tiles.get(a as any, b as any);
 }
 
 export function update(pos: Vector) {
