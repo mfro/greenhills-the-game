@@ -63,10 +63,13 @@ class TeacherAI extends AI<WalkingEntity, State> {
                 return;
 
             this._walk();
-        }, 5000 + Math.random() * 5000);
+        }, 3000 + Math.random() * 7000);
     }
 
     private _cleanup() {
+        world.off('change', this._update, this);
+        world.off('change', this._wander, this);
+
         if (this._room) {
             this._room.removeTeacher();
         }

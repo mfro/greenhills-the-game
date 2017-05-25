@@ -41,6 +41,15 @@ module.exports = {
                 ]
             },
             {
+                test: /\.js$/,
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: { presets: ['es2015'] }
+                    }
+                ]
+            },
+            {
                 test: /\.css$/,
                 loader: 'style-loader!css-loader'
             },

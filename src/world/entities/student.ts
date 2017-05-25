@@ -66,20 +66,26 @@ class StudentAI extends AI<Student, State> {
         if (!this._locker)
             return;
 
-        clearTimeout(this._timeout);
+        if (this._timeout != null)
+            return;
+
         this._timeout = setTimeout(this.if(State.AtDesk, () => {
+            this._timeout = null;
             this._walkToLocker();
-        }), 5000 + Math.random() * 5000);
+        }), 3000 + Math.random() * 7000);
     }
 
     private _onAtLocker() {
         if (!this._room || !this._desk)
             return;
 
-        clearTimeout(this._timeout);
+        if (this._timeout != null)
+            return;
+            
         this._timeout = setTimeout(this.if(State.AtLocker, () => {
+            this._timeout = null;
             this._walkToDesk();
-        }), 5000 + Math.random() * 5000);
+        }), 3000 + Math.random() * 7000);
     }
 
     private _walkToLocker() {
@@ -133,6 +139,9 @@ class StudentAI extends AI<Student, State> {
     }
 
     private _cleanup() {
+        world.off('change', this._update, this);
+        world.off('change', this.pulse, this);
+
         if (this._locker) {
             this._locker.owner = null;
             this._locker = null;

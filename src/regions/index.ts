@@ -93,7 +93,6 @@ export const COMPUTER_LAB = <Region.Definition>{
 
     requirements: [
         new requirements.Indoor(),
-        new requirements.Object(materials.SINK, 1),
         new requirements.Object(materials.COMPUTER_TABLE, 2),
     ]
 };
