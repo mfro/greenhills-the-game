@@ -49,6 +49,8 @@ export const CINDERBLOCK_WALL = new WallMaterial({
     isSolid: true,
     indoor: true,
     outdoor: true,
+
+    cost: 50,
 });
 
 export const BRICK_WALL = new WallMaterial({
@@ -59,6 +61,8 @@ export const BRICK_WALL = new WallMaterial({
     isSolid: true,
     indoor: true,
     outdoor: true,
+
+    cost: 60,
 });
 
 export const AIR = new PlainBlockMaterial({
@@ -68,6 +72,8 @@ export const AIR = new PlainBlockMaterial({
     thumbnail: 'demolish.png',
 
     isSolid: false,
+
+    cost: 0
 });
 
 
@@ -77,6 +83,8 @@ export const DIRT = new FoundationMaterial({
     id: 'DIRT',
     name: 'Dirt',
     texture: 'floors/dirt.png',
+    
+    cost: 0,
 });
 
 export const WOOD_FLOOR = new FoundationMaterial({
@@ -85,6 +93,8 @@ export const WOOD_FLOOR = new FoundationMaterial({
     texture: 'floors/wood.png',
 
     isIndoor: true,
+
+    cost: 50
 });
 
 export const TILE = new FoundationMaterial({
@@ -93,6 +103,8 @@ export const TILE = new FoundationMaterial({
     texture: 'floors/tile.png',
 
     isIndoor: true,
+
+    cost: 30,
 })
 
 export const BRICK_FLOOR = new FoundationMaterial({
@@ -101,6 +113,8 @@ export const BRICK_FLOOR = new FoundationMaterial({
     texture: 'floors/brick.png',
 
     isIndoor: true,
+
+    cost: 20,
 })
 
 export const CONCRETE_FLOOR = new FoundationMaterial({
@@ -109,6 +123,8 @@ export const CONCRETE_FLOOR = new FoundationMaterial({
     texture: 'floors/concrete.png',
 
     isIndoor: true,
+
+    cost: 10
 });
 
 export const CARPET = new FoundationMaterial({
@@ -117,6 +133,8 @@ export const CARPET = new FoundationMaterial({
     texture: 'floors/carpet.png',
 
     isIndoor: true,
+
+    cost: 30
 });
 
 
@@ -127,7 +145,9 @@ export const TOILET = new ObjectMaterial({
     width: 1,
     height: 1,
     type: Toilet,
-    texture: 'objects/toilet.png'
+    texture: 'objects/toilet.png',
+
+    cost: 100
 });
 
 export const DESK = new ObjectMaterial({
@@ -137,7 +157,9 @@ export const DESK = new ObjectMaterial({
     width: 1,
     height: 1,
     type: Desk,
-    texture: 'objects/desk.png'
+    texture: 'objects/desk.png',
+    
+    cost: 80
 });
 
 export const WOOD_TABLE = new ObjectMaterial({
@@ -148,6 +170,8 @@ export const WOOD_TABLE = new ObjectMaterial({
     height: 2,
     type: WoodTable,
     texture: 'objects/woodTable.png',
+
+    cost: 100
 });
 
 export const BOOKSHELF = new ObjectMaterial({
@@ -158,6 +182,8 @@ export const BOOKSHELF = new ObjectMaterial({
     height: 1,
     type: Bookshelf,
     texture: 'objects/bookshelf.png',
+
+    cost: 200
 });
 
 export const CHAIR = new ObjectMaterial({
@@ -168,6 +194,8 @@ export const CHAIR = new ObjectMaterial({
     height: 1,
     type: Chair,
     texture: 'objects/chair.png',
+
+    cost: 50
 });
 
 export const COMPUTER_TABLE = new ObjectMaterial({
@@ -178,6 +206,8 @@ export const COMPUTER_TABLE = new ObjectMaterial({
     height: 1,
     type: ComputerTable,
     texture: 'objects/computerTable.png',
+
+    cost: 800
 });
 
 export const LUNCH_TABLE = new ObjectMaterial({
@@ -188,6 +218,8 @@ export const LUNCH_TABLE = new ObjectMaterial({
     height: 3,
     type: LunchTable,
     texture: 'objects/lunchTable.png',
+
+    cost: 500
 });
 
 export const LOCKERS = new ObjectMaterial({
@@ -198,6 +230,8 @@ export const LOCKERS = new ObjectMaterial({
     height: 1,
     type: Lockers,
     texture: 'objects/lockers.png',
+
+    cost: 200
 });
 
 export const SINK = new ObjectMaterial({
@@ -208,6 +242,8 @@ export const SINK = new ObjectMaterial({
     height: 1,
     type: Sink,
     texture: 'objects/sink.png',
+
+    cost: 100
 });
 
 export const BULLDOZER = new ObjectMaterial({
@@ -219,4 +255,6 @@ export const BULLDOZER = new ObjectMaterial({
     type: Toilet,
     texture: texture.transparent,
     thumbnail: 'demolish.png',
+
+    cost: 0
 });

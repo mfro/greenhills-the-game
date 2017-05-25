@@ -5,6 +5,7 @@ import Vector from 'math/vector';
 
 import './hover';
 import './toolbar';
+import './statusbar';
 
 let container = new pixi.Container();
 

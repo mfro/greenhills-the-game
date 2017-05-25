@@ -3,6 +3,7 @@ import * as pixi from 'pixi.js';
 import * as app from 'app';
 import * as camera from 'camera';
 
+import * as world from 'world';
 import * as materials from 'world/materials';
 import * as blocks from 'world/blocks';
 import * as objects from 'world/objects';
@@ -25,18 +26,24 @@ let container = new pixi.Container();
 export const on = events.on;
 export const once = events.once;
 
-export function addJob(job: jobs.Base) {
-    active.push(job);
-    container.addChildAt(job.container, 0);
+// export function addJob(job: jobs.Base) {
+//     active.push(job);
+//     container.addChildAt(job.container, 0);
 
-    events.emit('job', job);
-    job.on('state', () => events.emit('job', job));
-}
+//     events.emit('job', job);
+//     job.on('state', () => events.emit('job', job));
+// }
 
-export function addJobs(jobs: jobs.Base[]) {
+export function addJobs(jobs: jobs.Base[], pay: boolean) {
     active.push(...jobs);
 
     for (let job of jobs) {
+        if (pay) {
+            if (job.material.cost > world.cash) return;
+
+            world.setCash(world.cash - job.material.cost);
+        }
+
         container.addChildAt(job.container, 0);
 
         events.emit('job', job);

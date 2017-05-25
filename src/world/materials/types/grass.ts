@@ -15,6 +15,7 @@ class GrassMaterial extends FoundationMaterial {
         super({
             id: 'GRASS',
             name: 'Grass',
+            cost: 5,
             texture: 'floors/grass.png',
         });
     }

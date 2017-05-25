@@ -93,7 +93,7 @@ mouse.on('up', 1000, e => {
 
     batch = batch.filter(j => batch.find(j2 => j2.position.equals(j.position)) == j);
 
-    construction.addJobs(batch);
+    construction.addJobs(batch, true);
 
     e.handled = true;
 });

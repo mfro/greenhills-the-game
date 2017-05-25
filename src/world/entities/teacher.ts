@@ -27,13 +27,12 @@ enum State {
     Idle,
 }
 
-class StudentAI extends AI<WalkingEntity, State> {
-    private _locker: Lockers;
+class TeacherAI extends AI<WalkingEntity, State> {
     private _room: Classroom;
 
     private _lastIncome = 0;
 
-    constructor(entity: Student) {
+    constructor(entity: Teacher) {
         super(entity, State.Idle);
 
         world.on('change', this._update, this);
@@ -43,91 +42,61 @@ class StudentAI extends AI<WalkingEntity, State> {
     }
 
     private _cleanup() {
-        if (this._locker) {
-            this._locker.owner = null;
-        }
-
         if (this._room) {
-            let index = this._room.students.indexOf(this.entity);
-            this._room.students.splice(index, 1);
+            this._room.teacher = null;
+
             world.emit('change', this._room.tiles[0]);
         }
     }
 
     private _income() {
-        if (!this._room || !this._locker)
-            return;
-
         let now = performance.now();
 
         if (now - this._lastIncome > 3000) {
             this._lastIncome = now;
-            world.setCash(world.cash + 10);
+            world.setCash(world.cash - 50);
         }
     }
 
     private _update() {
-        if (objects.allObjects.indexOf(this._locker) < 0)
-            this._locker = null;
-
         if (regions.allRegions.indexOf(this._room) < 0 || !this._room.validate())
             this._room = null;
-
-        if (!this._locker)
-            this._getLocker();
 
         if (!this._room)
             this._getRoom();
     }
 
     private _getRoom() {
-        let possible = regions.allRegions.filter(o => o instanceof Classroom && o.students.length < 10 && o.teacher && o.validate());
+        let possible = regions.allRegions.filter(o => o instanceof Classroom && !o.teacher && o.validate());
 
         if (possible.length == 0)
             return;
 
         this._room = possible[0] as Classroom;
-        this._room.students.push(this.entity);
-    }
-
-    private _getLocker() {
-        let possible = objects.allObjects.filter(o => o instanceof Lockers && !o.owner);
-
-        if (possible.length == 0)
-            return;
-
-        this._locker = possible[0] as Lockers;
-        this._locker.owner = this.entity;
-
-        let target = this._locker.position.add(this._locker.direction);
-        let path = this.entity.walkTo(target);
-
-        if (!path) {
-            this._locker.owner = null;
-            this._locker = null;
-            return;
-        }
+        this._room.teacher = this.entity;
     }
 }
 
-class Student extends WalkingEntity {
+class Teacher extends WalkingEntity {
     constructor(position: Vector) {
         super(position);
 
-        new StudentAI(this);
+        new TeacherAI(this);
+
+        let male = rand(1) == 1;
 
         let headIndex = rand(3);
         let hairIndex = rand(4);
-        let lipsIndex = rand(2);
+        let lipsIndex = male ? 1 : 0;
         let eyesIndex = rand(3);
 
-        let bodySize = rand(3);
-        let bodyIndex = rand(6);
+        let bodySize = male ? 1 : 0;
+        let bodyIndex = rand(3);
 
         let t = 33;
 
         let rects = [
-            new pixi.Rectangle(bodyIndex * t, (4 + bodySize) * t, t, t),
+            new pixi.Rectangle(bodyIndex * t, (8 + bodySize) * t, t, t),
             new pixi.Rectangle(headIndex * t, 0 * t, t, t),
             new pixi.Rectangle(lipsIndex * t, 3 * t, t, t),
             new pixi.Rectangle(eyesIndex * t, 2 * t, t, t),
@@ -147,4 +116,4 @@ class Student extends WalkingEntity {
     }
 }
 
-export default Student;
+export default Teacher;

@@ -13,19 +13,32 @@ import Entity from './entity';
 import Builder from './builder';
 import Student from './student';
 
+import { EventEmitter } from 'eventemitter3';
+
+const events = new EventEmitter<{
+    change: Vector;
+}>();
 
 let container = new pixi.Container();
-let entities = new Array<Entity>();
+export let allEntities = new Array<Entity>();
+
+export const on = events.on;
+export const once = events.once;
 
 export function addEntity(entity: Entity) {
     container.addChildAt(entity.container, 0);
-    entities.push(entity);
+    allEntities.push(entity);
+    
+    events.emit('change', entity.position);
 }
 
 export function removeEntity(entity: Entity) {
     container.removeChild(entity.container);
-    let index = entities.indexOf(entity);
-    entities.splice(index, 1);
+    let index = allEntities.indexOf(entity);
+    allEntities.splice(index, 1);
+    
+    entity.emit('removed');
+    events.emit('change', entity.position);
 }
 
 export function update(pos: Vector) {
@@ -60,7 +73,7 @@ app.hook('init', 'entities', () => {
 });
 
 app.hook('update', 'entities', dT => {
-    for (let entity of entities) {
+    for (let entity of allEntities) {
         entity.update(dT);
     }
 })

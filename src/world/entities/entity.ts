@@ -8,6 +8,8 @@ interface Events {
     idle: void;
     move: Vector;
     update: number;
+
+    removed: void;
 }
 
 class Entity extends EventEmitter<Events> {

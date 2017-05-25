@@ -55,6 +55,8 @@ namespace Vector {
     export const left = new Vector(-1, 0);
     export const right = new Vector(1, 0);
 
+    export const units = [up, down, left, right];
+
     export function equals(v1: Vector, v2: Vector) {
         return v1.x == v2.x && v1.y == v2.y;
     }

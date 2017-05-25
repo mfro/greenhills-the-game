@@ -62,6 +62,7 @@ class Region {
         }
 
         this._draw();
+        world.emit('change', this.tiles[0]);
     }
 
     removeTile(tile: Vector) {
@@ -73,6 +74,7 @@ class Region {
             regions.removeRegion(this);
         } else {
             this._draw();
+            world.emit('change', this.tiles[0]);
         }
     }
 }

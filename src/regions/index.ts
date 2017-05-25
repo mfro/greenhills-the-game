@@ -3,6 +3,7 @@ import * as pixi from 'pixi.js';
 import * as app from 'app';
 import * as camera from 'camera';
 
+import * as world from 'world';
 import * as materials from 'world/materials';
 import * as requirements from './requirements';
 
@@ -20,26 +21,29 @@ export {
     Classroom,
 };
 
-const regions = new Array<Region>();
 const container = new pixi.Container();
 
+export const allRegions = new Array<Region>();
+
 export function addRegion(region: Region) {
-    regions.push(region);
+    allRegions.push(region);
 
     container.addChildAt(region.container, 0);
+    world.emit('change', new Vector());
 }
 
 export function removeRegion(region: Region) {
-    let index = regions.indexOf(region);
+    let index = allRegions.indexOf(region);
     if (index < 0) return;
 
-    regions.splice(index, 1);
+    allRegions.splice(index, 1);
 
     container.removeChild(region.container);
+    world.emit('change', new Vector());
 }
 
 export function getRegion(tile: Vector) {
-    return regions.find(r => {
+    return allRegions.find(r => {
         return r.tiles.find(t => Vector.equals(t, tile)) != null;
     });
 }

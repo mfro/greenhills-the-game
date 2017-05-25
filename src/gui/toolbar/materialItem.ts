@@ -20,7 +20,9 @@ class MaterialToolbarItem extends ToolbarItem {
 
     private _background = new pixi.Graphics();
     private _sprite: pixi.Sprite;
-    private _text: pixi.Text;
+
+    private _name: pixi.Text;
+    private _price: pixi.Text;
 
     constructor(material: materials.Base) {
         super();
@@ -36,11 +38,17 @@ class MaterialToolbarItem extends ToolbarItem {
 
         this.container.addChildAt(this._sprite, 1);
 
-        this._text = new pixi.Text(material.name);
-        this._text.style.fontSize = 16;
-        this._text.position.set(this._sprite.position.x * 3 + this._sprite.width, 15);
+        this._name = new pixi.Text(material.name);
+        this._name.style.fontSize = 16;
+        this._name.position.set(24 + this._sprite.width, 15);
 
-        this.container.addChildAt(this._text, 1);
+        this.container.addChildAt(this._name, 1);
+
+        this._price = new pixi.Text('$' + material.cost);
+        this._price.style.fontSize = 16;
+        this._price.position.set(ToolbarItem.width - this._price.width - 8, 15);
+
+        this.container.addChildAt(this._price, 1);
 
         this.update();
     }

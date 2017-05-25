@@ -18,7 +18,11 @@ import Vector from 'math/vector';
 
 export const size = new Vector(100, 100);
 
-export let cash = 50000;
+export let cash = 5000;
+
+export function setCash(c: number) {
+    cash = c;
+}
 
 const events = new EventEmitter<{
     change: Vector;
@@ -26,6 +30,7 @@ const events = new EventEmitter<{
 
 export const on = events.on;
 export const once = events.once;
+export const emit = events.emit;
 
 export function isPassable(tile: Vector) {
     let block = blocks.getTile(tile);
@@ -41,6 +46,7 @@ export function isPassable(tile: Vector) {
 
 blocks.on('change', update);
 objects.on('change', update);
+entities.on('change', update);
 foundations.on('change', update);
 
 function update(pos: Vector) {
@@ -85,7 +91,7 @@ function load() {
 
         if (value.type == 'material')
             return materials.getMaterial(value.id);
-        
+
         return value;
     });
 
@@ -117,14 +123,15 @@ function load() {
         objects.addObject(obj);
     }
 
+    let list = new Array<jobs.Base>();
     for (let raw of save.jobs) {
         let type = (<any>jobs)[raw.type];
         let job = type.deserialize(raw);
         job.progress = raw.progress;
         job.state = jobs.State.WAITING;
-
-        construction.addJob(job);
+        list.push(job);
     }
+    construction.addJobs(list, false);
 }
 
 window.addEventListener('beforeunload', save);
@@ -161,13 +168,13 @@ function save() {
     let json = JSON.stringify(save, (key, value) => {
         if (value instanceof Vector)
             return { type: 'vector', x: value.x, y: value.y };
-        
+
         if (value instanceof materials.Base)
             return { type: 'material', id: value.id };
-        
+
         return value;
     });
-    
+
     localStorage.setItem('GreenhillsTheGame.Save', json);
 }
 
