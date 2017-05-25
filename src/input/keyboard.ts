@@ -20,7 +20,10 @@ export const
     W = 87,
     A = 65,
     S = 83,
-    D = 68;
+    D = 68,
+    
+    Q = 81,
+    E = 69;
 
 export const on = events.on;
 export const once = events.once;

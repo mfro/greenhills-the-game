@@ -13,25 +13,38 @@ const events = new EventEmitter<{
     change: Vector;
 }>();
 
-const objects = new Array<GameObject>();
+export const allObjects = new Array<GameObject>();
 const container = new pixi.Container();
 
 export const on = events.on;
 export const once = events.once;
 
 export function addObject(obj: GameObject) {
-    objects.push(obj);
+    allObjects.push(obj);
 
     container.addChildAt(obj.container, 0);
+
+    events.emit('change', obj.position);
+}
+
+export function removeObject(obj: GameObject) {
+    let index = allObjects.indexOf(obj);
+    if (index < 0) return;
+
+    allObjects.splice(index, 1);
+
+    container.removeChild(obj.container);
+
+    events.emit('change', obj.position);
 }
 
 export function getObject(tile: Vector) {
-    return objects.find(o => {
+    return allObjects.find(o => {
         return tile.x >= o.position.x && tile.x < o.position.x + o.size.x &&
             tile.y >= o.position.y && tile.y < o.position.y + o.size.y;
     });
 }
 
-app.hook('init', 'blocks', () => {
+app.hook('init', 'objects', () => {
     camera.addObject(container, 1);
 });

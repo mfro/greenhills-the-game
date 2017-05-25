@@ -14,6 +14,7 @@ import GrassMaterial from './types/grass';
 
 import Toilet from 'world/objects/toilet';
 import Desk from 'world/objects/desk';
+import WoodTable from 'world/objects/woodTable';
 
 export {
     Material as Base,
@@ -27,6 +28,10 @@ export {
 };
 
 export const allMaterials = Material.allMaterials;
+
+export function getMaterial(id: string) {
+    return allMaterials.find(m => m.id == id);
+}
 
 export const CINDERBLOCK_WALL = new WallMaterial({
     id: 'CINDERBLOCK_WALL',
@@ -50,8 +55,9 @@ export const BRICK_WALL = new WallMaterial({
 
 export const AIR = new PlainBlockMaterial({
     id: 'AIR',
-    name: 'Air',
+    name: 'Remove walls',
     texture: texture.transparent,
+    thumbnail: 'demolish.png',
 
     isSolid: false,
 });
@@ -72,6 +78,14 @@ export const WOOD_FLOOR = new FoundationMaterial({
 
     isIndoor: true,
 });
+
+export const TILE = new FoundationMaterial({
+    id: 'TILE_FLOOR',
+    name: 'Tile',
+    texture: 'floors/tile.png',
+
+    isIndoor: true,
+})
 
 export const BRICK_FLOOR = new FoundationMaterial({
     id: 'BRICK_FLOOR',
@@ -116,4 +130,25 @@ export const DESK = new ObjectMaterial({
     height: 2,
     type: Desk,
     texture: 'objects/desk.png'
+});
+
+export const WOOD_TABLE = new ObjectMaterial({
+    id: 'WOOD_TABLE',
+    name: 'Wood table',
+
+    width: 1,
+    height: 2,
+    type: WoodTable,
+    texture: 'objects/woodTable.png',
+});
+
+export const BULLDOZER = new ObjectMaterial({
+    id: 'BULLDOZER',
+    name: 'Remove objects',
+
+    width: 1,
+    height: 1,
+    type: Toilet,
+    texture: texture.transparent,
+    thumbnail: 'demolish.png',
 });

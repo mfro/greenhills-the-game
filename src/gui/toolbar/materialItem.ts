@@ -2,6 +2,7 @@ import * as pixi from 'pixi.js';
 
 import * as materials from 'world/materials';
 import * as construction from 'construction/controls';
+import * as regions from 'regions/controls';
 
 import Vector from 'math/vector';
 
@@ -48,14 +49,15 @@ class MaterialToolbarItem extends ToolbarItem {
         this._background.clear();
 
         if (this.material == construction.material) {
-            this._background.beginFill(0x0000EE, 0.5);
-            this._background.drawRect(0, 0, this._sprite.width + 16, this._sprite.height + 16);
+            this._background.beginFill(0x0000EE, 0.25);
+            this._background.drawRect(0, 0, ToolbarItem.width, ToolbarItem.height);
             this._background.endFill();
         }
     }
 
     public click() {
         construction.setMaterial(this.material);
+        regions.setType(null);
 
         this.emit('update');
     }

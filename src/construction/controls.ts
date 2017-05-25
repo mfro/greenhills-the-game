@@ -2,10 +2,12 @@ import * as pixi from 'pixi.js';
 
 import * as app from 'app';
 import * as mouse from 'input/mouse';
+import * as keyboard from 'input/keyboard';
 import * as camera from 'camera';
 
 import * as world from 'world';
 import * as blocks from 'world/blocks';
+import * as objects from 'world/objects';
 import * as foundations from 'world/foundations';
 
 import Vector from 'math/vector';
@@ -18,10 +20,18 @@ import * as jobs from './job';
 let start: Vector;
 let end: Vector;
 let action: (v: Vector) => jobs.Base;
+let direction = Vector.right;
 
 let graphics = new pixi.Graphics();
 
-export let material: materials.Base = materials.CINDERBLOCK_WALL;
+let hover = new pixi.Container();
+let hoverSprite = new pixi.Sprite();
+let hoverGraphics = new pixi.Graphics();
+
+hover.addChildAt(hoverGraphics, 0);
+hover.addChildAt(hoverSprite, 1);
+
+export let material: materials.Base = null;
 
 export function setMaterial(mat: materials.Base) {
     material = mat;
@@ -29,6 +39,7 @@ export function setMaterial(mat: materials.Base) {
 
 mouse.on('down', 1000, e => {
     if (e.handled) return;
+    if (material == null) return;
 
     if (start) {
         start = null;
@@ -71,18 +82,6 @@ mouse.on('up', 1000, e => {
     let batch = Array<jobs.Base>();
     let mat: materials.Base;
 
-    // if (action == Action.PLACE)
-    //     mat = material;
-
-    // else if (material instanceof materials.Block)
-    //     mat = materials.AIR;
-
-    // else if (material instanceof materials.Foundation)
-    //     mat = materials.DIRT;
-
-    // else if (material instanceof materials.Object)
-    //     mat = null;
-
     for (let x = min.x; x <= max.x; x++) {
         for (let y = min.y; y <= max.y; y++) {
             let job = action(new Vector(x, y));
@@ -92,34 +91,117 @@ mouse.on('up', 1000, e => {
         }
     }
 
+    batch = batch.filter(j => batch.find(j2 => j2.position.equals(j.position)) == j);
+
     construction.addJobs(batch);
 
     e.handled = true;
 });
 
+keyboard.on('down', key => {
+    let array = [
+        Vector.up,
+        Vector.left,
+        Vector.down,
+        Vector.right
+    ];
+
+    let index = array.indexOf(direction);
+
+    if (key == keyboard.Q)
+        index++;
+    else if (key == keyboard.E)
+        index++;
+    else return;
+
+    index = index % array.length;
+    while (index < 0) index += array.length;
+
+    direction = array[index];
+});
+
 app.hook('prerender', 'construction/controls', () => {
-    if (!start) return;
+    hover.alpha = (material && !start) ? 1 : 0;
 
-    let { min, max } = compute();
+    if (material == null) return;
 
-    graphics.clear();
-    graphics.beginFill(0xFF0000, 0.5);
-    graphics.drawRect(min.x, min.y, max.x - min.x + 1, max.y - min.y + 1);
-    graphics.endFill();
+    if (start == null) {
+        let tile = camera.transform(mouse.position).apply(Math.floor);
+
+        hoverSprite.alpha = 0.5;
+        hoverSprite.position = tile.toPoint();
+
+        hoverGraphics.clear();
+
+        hoverGraphics.beginFill(0xFFFFFF, 0.2);
+        if (material instanceof materials.Object) {
+            let w = (direction == Vector.up || direction == Vector.down) ? material.width : material.height;
+            let h = (direction == Vector.up || direction == Vector.down) ? material.height : material.width;
+
+            hoverSprite.width = w;
+            hoverSprite.height = h;
+            
+            hoverSprite.texture = material.getTexture(direction);
+
+            hoverGraphics.drawRect(tile.x, tile.y, w, h);
+        } else {
+            hoverSprite.width = hoverSprite.height = 1;
+            hoverSprite.texture = material.thumbnail;
+
+            hoverGraphics.drawRect(tile.x, tile.y, 1, 1);
+        }
+
+        hoverGraphics.endFill();
+    } else {
+        let { min, max } = compute();
+
+        graphics.clear();
+        graphics.beginFill(0xFF0000, 0.5);
+        graphics.drawRect(min.x, min.y, max.x - min.x + 1, max.y - min.y + 1);
+        graphics.endFill();
+    }
 });
 
 app.hook('init', 'construction/controls', () => {
     camera.addObject(graphics, 1000);
+
+    camera.addObject(hover, 100);
 });
 
 function place(v: Vector): jobs.Base {
+    let dir = direction;
+
     if (!material.isPlaceable(v))
         return;
 
-    if (construction.getJob(v) !== null)
-        return;
+    if (material instanceof materials.Object) {
+        for (let x = v.x; x < v.x + (dir == Vector.up || dir == Vector.down ? material.width : material.height); x++) {
+            for (let y = v.y; y < v.y + (dir == Vector.up || dir == Vector.down ? material.height : material.width); y++) {
+                if (construction.getJob(new Vector(x, y)) != null)
+                    return;
+            }
+        }
+    } else {
+        if (construction.getJob(v) !== null)
+            return;
+    }
 
-    if (material instanceof materials.Block) {
+    if (material == materials.BULLDOZER) {
+        let object = objects.getObject(v);
+
+        if (object != null) {
+            return new jobs.DemolishObject(object.position);
+        }
+    }
+
+    else if (material == materials.AIR) {
+        if (blocks.getTile(v).material == material)
+            return;
+
+        return new jobs.DemolishBlock(v);
+    }
+
+    else if (material instanceof materials.Block) {
         if (blocks.getTile(v).material == material)
             return;
 
@@ -134,7 +216,7 @@ function place(v: Vector): jobs.Base {
     }
 
     else if (material instanceof materials.Object) {
-        let job = new jobs.BuildObject(material, v, Vector.right);
+        let job = new jobs.BuildObject(material, v, dir);
 
         let success = true;
         for (let x = job.position.x; success && x < job.position.x + job.size.x; x++) {
@@ -167,7 +249,7 @@ function compute() {
             end = new Vector(start.x, end.y);
     }
 
-    if (material instanceof materials.Object && action == place) {
+    if (material instanceof materials.Object && action == place && material !== materials.BULLDOZER) {
         end = start;
     }
 

@@ -1,4 +1,5 @@
 import * as pixi from 'pixi.js';
+import * as texture from 'texture';
 
 import * as world from 'world';
 import * as blocks from 'world/blocks';
@@ -11,6 +12,13 @@ import Vector from 'math/vector';
 import AI from './ai';
 import Entity from './entity';
 import WalkingEntity from './walkingentity';
+
+let atlas: pixi.Texture;
+texture.load('people.png', t => atlas = t);
+
+function rand(i: number) {
+    return Math.floor(Math.random() * i);
+}
 
 enum State {
     Idle,
@@ -54,7 +62,7 @@ class BuilderAI extends AI<WalkingEntity, State> {
             if (this._job.state == jobs.State.ASSIGNED)
                 this._job.state = jobs.State.WAITING;
         }
-        
+
         this._job = job;
 
         if (job !== null) {
@@ -155,13 +163,29 @@ class Builder extends WalkingEntity {
 
         new BuilderAI(this);
 
-        let graphics = new pixi.Graphics();
+        let headIndex = rand(3);
+        let lipsIndex = rand(2);
+        let eyesIndex = rand(3);
+        let t = 33;
 
-        graphics.beginFill(0xeeff35, 1);
-        graphics.drawCircle(0, 0, 0.45);
-        graphics.endFill();
+        let rects = [
+            new pixi.Rectangle(0, 7 * t, t, t),
+            new pixi.Rectangle(headIndex * t, 0 * t, t, t),
+            new pixi.Rectangle(lipsIndex * t, 3 * t, t, t),
+            new pixi.Rectangle(eyesIndex * t, 2 * t, t, t),
+            new pixi.Rectangle(0, 10 * t, t, t),
+        ];
 
-        this.container.addChildAt(graphics, 0);
+        for (let rect of rects) {
+            let tex = new pixi.Texture(atlas.baseTexture, rect);
+            let sprite = new pixi.Sprite(tex);
+
+            sprite.width = 1;
+            sprite.height = 1;
+            sprite.position.set(-0.5);
+
+            this.container.addChildAt(sprite, 0);
+        }
     }
 }
 

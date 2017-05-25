@@ -9,7 +9,9 @@ import * as world from 'world';
 
 import Vector from 'math/vector';
 import Entity from './entity';
+
 import Builder from './builder';
+import Student from './student';
 
 
 let container = new pixi.Container();
@@ -43,6 +45,18 @@ app.hook('init', 'entities', () => {
 
     let entity4 = new Builder(new Vector(53.5, 50.5));
     addEntity(entity4);
+
+    let student1 = new Student(new Vector(50.5, 51.5));
+    addEntity(student1);
+
+    let student2 = new Student(new Vector(51.5, 51.5));
+    addEntity(student2);
+
+    let student3 = new Student(new Vector(52.5, 51.5));
+    addEntity(student3);
+
+    let student4 = new Student(new Vector(53.5, 51.5));
+    addEntity(student4);
 });
 
 app.hook('update', 'entities', dT => {

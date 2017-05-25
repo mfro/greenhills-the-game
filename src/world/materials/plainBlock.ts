@@ -15,10 +15,18 @@ class PlainBlockMaterial extends BlockMaterial {
 
         if (typeof def.texture == 'string')
             texture.load(def.texture, atlas => {
-                this.thumbnail = this._texture = atlas;
+                this._texture = atlas;
+                if (!def.thumbnail)
+                    this.thumbnail = atlas;
             });
         else {
             this.thumbnail = this._texture = def.texture;
+        }
+
+        if (def.thumbnail) {
+            texture.load(def.thumbnail, atlas => {
+                this.thumbnail = atlas;
+            });
         }
     }
 
@@ -34,6 +42,7 @@ class PlainBlockMaterial extends BlockMaterial {
 namespace PlainBlockMaterial {
     export interface Definition extends BlockMaterial.Definition {
         texture: string | pixi.Texture;
+        thumbnail?: string;
     }
 }
 

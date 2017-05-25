@@ -2,6 +2,7 @@ import * as pixi from 'pixi.js';
 
 import * as texture from 'texture';
 import * as blocks from 'world/blocks';
+import * as objects from 'world/objects';
 import * as foundations from 'world/foundations';
 
 import Vector from 'math/vector';
@@ -32,9 +33,10 @@ class WallMaterial extends BlockMaterial {
     }
 
     public isPlaceable(pos: Vector): boolean {
-        let floor = foundations.getTile(pos.x, pos.y);
+        let floor = foundations.getTile(pos);
+        let obj = objects.getObject(pos);
 
-        return (floor.material.isIndoor && this._indoor) || (!floor.material.isIndoor && this._outdoor);
+        return !obj && ((floor.material.isIndoor && this._indoor) || (!floor.material.isIndoor && this._outdoor));
     }
 
     public getTexture(pos: Vector): pixi.Texture {

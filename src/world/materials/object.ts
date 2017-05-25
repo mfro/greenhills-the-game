@@ -19,22 +19,35 @@ class ObjectMaterial extends Material {
         super(def);
 
         this.type = def.type;
-        
+
         this.width = def.width;
         this.height = def.height;
 
-        texture.load(def.texture, atlas => {
-            let tile = atlas.width / (def.width + def.height) / 2;
+        if (def.texture instanceof pixi.Texture) {
+            this._textures = [def.texture, def.texture, def.texture, def.texture,];
+            if (!def.thumbnail)
+                this.thumbnail = def.texture;
+        } else {
+            texture.load(def.texture, atlas => {
+                let tile = atlas.width / (def.width + def.height) / 2;
 
-            this._textures = [
-                new pixi.Rectangle(0, 0, def.width * tile, def.height * tile),
-                new pixi.Rectangle(def.width * tile, 0, def.width * tile, def.height * tile),
-                new pixi.Rectangle(def.width * tile * 2, 0, def.height * tile, def.width * tile),
-                new pixi.Rectangle(def.width * tile * 2 + def.height * tile, 0, def.height * tile, def.width * tile),
-            ].map(r => new pixi.Texture(atlas.baseTexture, r));
+                this._textures = [
+                    new pixi.Rectangle(0, 0, def.width * tile, def.height * tile),
+                    new pixi.Rectangle(def.width * tile, 0, def.width * tile, def.height * tile),
+                    new pixi.Rectangle(def.width * tile * 2, 0, def.height * tile, def.width * tile),
+                    new pixi.Rectangle(def.width * tile * 2 + def.height * tile, 0, def.height * tile, def.width * tile),
+                ].map(r => new pixi.Texture(atlas.baseTexture, r));
 
-            this.thumbnail = this._textures[3];
-        });
+                if (!def.thumbnail)
+                    this.thumbnail = this._textures[3];
+            });
+        }
+
+        if (def.thumbnail) {
+            texture.load(def.thumbnail, atlas => {
+                this.thumbnail = atlas;
+            });
+        }
     }
 
     public isPlaceable(pos: Vector, dir?: Vector) {
@@ -43,7 +56,7 @@ class ObjectMaterial extends Material {
         let w: number, h: number;
         if (dir == Vector.up || dir == Vector.down)
             w = this.width, h = this.height;
-        
+
         else
             w = this.height, h = this.width;
 
@@ -53,7 +66,7 @@ class ObjectMaterial extends Material {
     public getTexture(dir: Vector) {
         if (dir == Vector.up)
             return this._textures[0];
-        
+
         if (dir == Vector.down)
             return this._textures[1];
 
@@ -71,7 +84,8 @@ namespace ObjectMaterial {
         width: number;
         height: number;
 
-        texture: string;
+        texture: string | pixi.Texture;
+        thumbnail?: string;
     }
 }
 

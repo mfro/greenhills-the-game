@@ -7,6 +7,7 @@ import * as objects from 'world/objects';
 import * as foundations from 'world/foundations';
 
 import Vector from 'math/vector';
+import GameObject from 'world/objects/object';
 import { EventEmitter } from 'eventemitter3';
 
 export enum State {
@@ -19,6 +20,12 @@ export enum State {
 interface Events {
     progress: void;
     state: void;
+}
+
+interface SerializeBase {
+    progress: number;
+    state: State;
+    type: any;
 }
 
 export abstract class Base extends EventEmitter<Events> {
@@ -50,6 +57,8 @@ export abstract class Base extends EventEmitter<Events> {
         this.emit('state');
     }
 
+    protected _sprite: pixi.Sprite;
+
     constructor(material: materials.Base, position: Vector, size: Vector) {
         super();
 
@@ -59,18 +68,33 @@ export abstract class Base extends EventEmitter<Events> {
 
         this.container.position = position.toPoint();
 
-        let sprite = new pixi.Sprite(material.getTexture(position));
-        sprite.width = size.x;
-        sprite.height = size.y;
-        sprite.alpha = 0.5;
+        this._sprite = new pixi.Sprite(material.getTexture(position));
+        this._sprite.width = size.x;
+        this._sprite.height = size.y;
+        this._sprite.alpha = 0.5;
 
-        this.container.addChildAt(sprite, 0);
+        this.container.addChildAt(this._sprite, 0);
         this.container.addChildAt(this._graphics, 1);
 
         this._update();
     }
 
     public abstract finish(): void;
+
+    public serialize(): SerializeBase {
+        return {
+            progress: this.progress,
+            state: this.state,
+            type: this.constructor.name,
+        };
+    }
+
+    public deserialize(s: SerializeBase) {
+        this.progress = s.progress;
+        this.state = s.state;
+
+        return this;
+    }
 
     private _update() {
         this._graphics.clear();
@@ -89,11 +113,32 @@ export class BuildBlock extends Base {
     public finish() {
         blocks.setTile(this.position.x, this.position.y, this.material as materials.Block);
     }
+
+    public serialize() {
+        return Object.assign(super.serialize(), {
+            material: this.material,
+            position: this.position
+        });
+    }
+
+    static deserialize(args: any) {
+        return new BuildBlock(args.material, args.position).deserialize(args);
+    }
 }
 
 export class DemolishBlock extends BuildBlock {
     constructor(position: Vector) {
         super(materials.AIR, position);
+    }
+
+    public serialize() {
+        return Object.assign(super.serialize(), {
+            position: this.position
+        });
+    }
+
+    static deserialize(args: any) {
+        return new DemolishBlock(args.position).deserialize(args);
     }
 }
 
@@ -104,6 +149,17 @@ export class BuildFoundation extends Base {
 
     public finish() {
         foundations.setTile(this.position.x, this.position.y, this.material as materials.Foundation);
+    }
+
+    public serialize() {
+        return Object.assign(super.serialize(), {
+            material: this.material,
+            position: this.position
+        });
+    }
+
+    static deserialize(args: any) {
+        return new BuildFoundation(args.material, args.position).deserialize(args);
     }
 }
 
@@ -117,11 +173,49 @@ export class BuildObject extends Base {
         ));
 
         this.direction = direction;
+
+        this._sprite.texture = material.getTexture(direction);
     }
 
     public finish() {
         let obj = new ((this.material as materials.Object).type)(this.position, this.direction);
 
         objects.addObject(obj);
+    }
+
+    public serialize() {
+        return Object.assign(super.serialize(), {
+            material: this.material,
+            position: this.position,
+            direction: this.direction,
+        });
+    }
+
+    static deserialize(args: any) {
+        return new BuildObject(args.material, args.position, args.direction).deserialize(args);
+    }
+}
+
+export class DemolishObject extends Base {
+    public readonly object: GameObject;
+
+    constructor(position: Vector) {
+        super(materials.AIR, objects.getObject(position).position, objects.getObject(position).size);
+
+        this.object = objects.getObject(position);
+    }
+
+    public finish() {
+        objects.removeObject(this.object);
+    }
+
+    public serialize() {
+        return Object.assign(super.serialize(), {
+            position: this.position
+        });
+    }
+
+    static deserialize(args: any) {
+        return new DemolishObject(args.position).deserialize(args);
     }
 }

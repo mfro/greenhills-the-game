@@ -1,4 +1,3 @@
-- Objects
 - Areas
 - Students
 - Teachers
