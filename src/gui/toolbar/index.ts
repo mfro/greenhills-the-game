@@ -64,6 +64,10 @@ app.hook('init', 'gui-toolbar', () => {
 
     let rooms = new ToolbarMenu('Rooms', 3);
     rooms.addItem(new RegionToolbarItem(regions.CLASSROOM));
+    rooms.addItem(new RegionToolbarItem(regions.CAFETERIA));
+    rooms.addItem(new RegionToolbarItem(regions.BATHROOM));
+    rooms.addItem(new RegionToolbarItem(regions.COMPUTER_LAB));
+    rooms.addItem(new RegionToolbarItem(regions.LIBRARY));
 
     toolbar.addChildAt(floors.container, 1);
     toolbar.addChildAt(walls.container, 1);

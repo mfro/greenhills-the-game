@@ -92,11 +92,16 @@ function create() {
     let tiles = new Array<Vector>();
     let region = new type.constructor(type);
 
-    function merge(v: Vector) {
+    function merge(v: Vector, steal?: boolean) {
         let here = regions.getRegion(v);
+        if (!here) return;;
+
         if (here instanceof type.constructor) {
             regions.removeRegion(here);
             tiles = tiles.concat(here.tiles);
+        } else if (steal) {
+            here = here as regions.Base;
+            here.removeTile(v);
         }
     }
 
@@ -104,7 +109,7 @@ function create() {
         for (let y = min.y; y <= max.y; y++) {
             tiles.push(new Vector(x, y));
 
-            merge(new Vector(x, y));
+            merge(new Vector(x, y), true);
         }
 
         if (min.y > 0)
@@ -126,7 +131,7 @@ function create() {
         let same = tiles.find(t => Vector.equals(t, tile));
         return same == tile;
     });
-    
+
     region.addTile(...tiles);
 
     regions.addRegion(region);

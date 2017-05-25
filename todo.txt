@@ -1,4 +1,8 @@
-- Areas
 - Students
 - Teachers
 - Utilities
+
+Lunchroom
+Bathroom
+Computer lab
+Library

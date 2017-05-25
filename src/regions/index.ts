@@ -9,7 +9,11 @@ import * as requirements from './requirements';
 import Vector from 'math/vector';
 import Region from './region';
 
+import Library from './types/library';
+import Bathroom from './types/bathroom';
+import Cafeteria from './types/cafeteria';
 import Classroom from './types/classroom';
+import ComputerLab from './types/computerlab';
 
 export {
     Region as Base,
@@ -49,6 +53,56 @@ export const CLASSROOM = <Region.Definition>{
     requirements: [
         new requirements.Indoor(),
         new requirements.Object(materials.DESK, 10),
+    ]
+};
+
+export const CAFETERIA = <Region.Definition>{
+    id: 'CAFETERIA',
+    name: 'Cafeteria',
+
+    constructor: Cafeteria,
+
+    requirements: [
+        new requirements.Indoor(),
+        new requirements.Object(materials.LUNCH_TABLE, 6),
+    ]
+};
+
+export const BATHROOM = <Region.Definition>{
+    id: 'BATHROOM',
+    name: 'Bathroom',
+
+    constructor: Bathroom,
+
+    requirements: [
+        new requirements.Indoor(),
+        new requirements.Object(materials.SINK, 1),
+        new requirements.Object(materials.TOILET, 1),
+    ]
+};
+
+export const COMPUTER_LAB = <Region.Definition>{
+    id: 'COMPUTER_LAB',
+    name: 'Computer lab',
+
+    constructor: ComputerLab,
+
+    requirements: [
+        new requirements.Indoor(),
+        new requirements.Object(materials.SINK, 1),
+        new requirements.Object(materials.COMPUTER_TABLE, 2),
+    ]
+};
+
+export const LIBRARY = <Region.Definition>{
+    id: 'LIBRARY',
+    name: 'Library',
+
+    constructor: Library,
+
+    requirements: [
+        new requirements.Indoor(),
+        new requirements.Object(materials.BOOKSHELF, 2),
     ]
 };
 
