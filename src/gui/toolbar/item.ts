@@ -26,7 +26,7 @@ abstract class ToolbarItem extends EventEmitter<Events> {
     public abstract update(): void;
 
     public static readonly height = 48;
-    public static readonly width = 200;
+    public static readonly width = 250;
 }
 
 export default ToolbarItem;

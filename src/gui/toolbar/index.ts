@@ -50,7 +50,15 @@ app.hook('init', 'gui-toolbar', () => {
     let objects = new ToolbarMenu('Objects', 2);
     objects.addItem(new MaterialToolbarItem(materials.TOILET));
     objects.addItem(new MaterialToolbarItem(materials.DESK));
+    objects.addItem(new MaterialToolbarItem(materials.CHAIR));
+
     objects.addItem(new MaterialToolbarItem(materials.WOOD_TABLE));
+    objects.addItem(new MaterialToolbarItem(materials.LUNCH_TABLE));
+    objects.addItem(new MaterialToolbarItem(materials.COMPUTER_TABLE));
+
+    objects.addItem(new MaterialToolbarItem(materials.LOCKERS));
+    objects.addItem(new MaterialToolbarItem(materials.BOOKSHELF));
+    objects.addItem(new MaterialToolbarItem(materials.SINK));
     
     objects.addItem(new MaterialToolbarItem(materials.BULLDOZER));
 

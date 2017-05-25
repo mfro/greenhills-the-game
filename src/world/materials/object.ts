@@ -31,6 +31,8 @@ class ObjectMaterial extends Material {
             texture.load(def.texture, atlas => {
                 let tile = atlas.width / (def.width + def.height) / 2;
 
+                console.log(def);
+
                 this._textures = [
                     new pixi.Rectangle(0, 0, def.width * tile, def.height * tile),
                     new pixi.Rectangle(def.width * tile, 0, def.width * tile, def.height * tile),
