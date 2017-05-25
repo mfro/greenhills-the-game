@@ -64,6 +64,8 @@ class Counter extends EventEmitter<Events> {
         if (e.position.x >= this.position.x && e.position.x < this.position.x + 30) {
             if (e.position.y > 48)
                 return;
+
+            e.handled = true;
             
             if (e.position.y < 24) {
                 this.value++;

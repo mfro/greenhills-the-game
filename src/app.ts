@@ -94,15 +94,19 @@ window.addEventListener('load', () => {
     app.view.addEventListener('contextmenu', e => e.preventDefault());
 
     document.body.appendChild(app.view);
-    
+
     emit('preload', null);
 
     pixi.loader.load(() => {
         emit('init', null);
 
+        let lastTick = performance.now();
         app.ticker.add(dT => {
-            dT = dT * (app.ticker.elapsedMS / 1000);
-            emit('update', dT);
+            let now = performance.now();
+
+            emit('update', (now - lastTick) / 1000);
+
+            lastTick = now;
         });
 
         app.renderer.on('prerender', () => emit('prerender', null));

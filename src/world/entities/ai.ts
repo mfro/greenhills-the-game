@@ -54,10 +54,10 @@ class AI<E extends Entity, S extends number> extends EventEmitter<Events<S>> {
         this.emit('state', this.state);
     }
 
-    protected switch<A>(args: { [id: number]: (a: A) => void }) {
-        return (a: A) => {
+    protected switch(args: { [id: number]: () => void }) {
+        return () => {
             let cb = args[Number(this.state)];
-            if (cb) cb.bind(this)(a);
+            if (cb) cb.bind(this)();
         };
     }
 

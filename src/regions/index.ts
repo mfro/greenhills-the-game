@@ -29,7 +29,7 @@ export function addRegion(region: Region) {
     allRegions.push(region);
 
     container.addChildAt(region.container, 0);
-    world.emit('change', new Vector());
+        world.change();
 }
 
 export function removeRegion(region: Region) {
@@ -39,7 +39,7 @@ export function removeRegion(region: Region) {
     allRegions.splice(index, 1);
 
     container.removeChild(region.container);
-    world.emit('change', new Vector());
+        world.change();
 }
 
 export function getRegion(tile: Vector) {

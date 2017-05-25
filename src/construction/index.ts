@@ -26,24 +26,16 @@ let container = new pixi.Container();
 export const on = events.on;
 export const once = events.once;
 
-// export function addJob(job: jobs.Base) {
-//     active.push(job);
-//     container.addChildAt(job.container, 0);
-
-//     events.emit('job', job);
-//     job.on('state', () => events.emit('job', job));
-// }
-
 export function addJobs(jobs: jobs.Base[], pay: boolean) {
-    active.push(...jobs);
 
     for (let job of jobs) {
         if (pay) {
-            if (job.material.cost > world.cash) return;
+            if (job.material.cost > world.cash) continue;
 
             world.setCash(world.cash - job.material.cost);
         }
 
+        active.push(job);
         container.addChildAt(job.container, 0);
 
         events.emit('job', job);

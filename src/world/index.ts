@@ -30,7 +30,6 @@ const events = new EventEmitter<{
 
 export const on = events.on;
 export const once = events.once;
-export const emit = events.emit;
 
 export function isPassable(tile: Vector) {
     let block = blocks.getTile(tile);
@@ -56,12 +55,14 @@ function update(pos: Vector) {
 
             blocks.update(v);
             foundations.update(v);
-
-            entities.update(v);
         }
     }
 
     events.emit('change', pos);
+}
+
+export function change() {
+    setImmediate(() => events.emit('change', new Vector()));
 }
 
 interface SaveObject {

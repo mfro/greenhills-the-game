@@ -39,7 +39,7 @@ app.hook('init', 'gui-statusbar', () => {
 });
 
 app.hook('prerender', 'gui-statusbar', () => {
-    bank.text = '$' + world.cash;
+    bank.text = '$' + Math.round(world.cash / 10) * 10;
 });
 
 students.on('change', count => {

@@ -16,7 +16,8 @@ class BlockTile {
 
         this.sprite = new pixi.Sprite();
 
-        let padding = 1 / 33 / 4;
+        // let padding = 1 / 33 / 4;
+        let padding = 0;
         
         this.sprite.position = this.position.apply(v => v - padding).toPoint();
         this.sprite.width = 1 + padding * 2;

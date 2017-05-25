@@ -29,51 +29,70 @@ enum State {
 
 class TeacherAI extends AI<WalkingEntity, State> {
     private _room: Classroom;
-
-    private _lastIncome = 0;
+    private _timeout: number;
 
     constructor(entity: Teacher) {
         super(entity, State.Idle);
 
+        this.entity.salary = 170;
+
         world.on('change', this._update, this);
         this.onState(State.Idle, this._update, this);
         this.entity.on('removed', this._cleanup, this);
-        this.entity.on('update', this._income, this);
+
+        world.on('change', this._wander, this);
+        this.entity.on('idle', this._wander, this);
+    }
+
+    private _walk() {
+        clearTimeout(this._timeout);
+
+        let options = this._room.tiles.filter(t => world.isPassable(t));
+
+        let rand = Math.floor(Math.random() * options.length);
+        let tile = options[rand];
+
+        this.entity.walkTo(tile);
+    }
+
+    private _wander() {
+        clearTimeout(this._timeout);
+
+        this._timeout = setTimeout(() => {
+            if (!this._room)
+                return;
+
+            this._walk();
+        }, 5000 + Math.random() * 5000);
     }
 
     private _cleanup() {
         if (this._room) {
-            this._room.teacher = null;
-
-            world.emit('change', this._room.tiles[0]);
-        }
-    }
-
-    private _income() {
-        let now = performance.now();
-
-        if (now - this._lastIncome > 3000) {
-            this._lastIncome = now;
-            world.setCash(world.cash - 50);
+            this._room.removeTeacher();
         }
     }
 
     private _update() {
-        if (regions.allRegions.indexOf(this._room) < 0 || !this._room.validate())
+        if (this._room && (regions.allRegions.indexOf(this._room) < 0)) {
+            let r = this._room;
             this._room = null;
+            r.removeTeacher();
+        }
 
         if (!this._room)
             this._getRoom();
     }
 
     private _getRoom() {
-        let possible = regions.allRegions.filter(o => o instanceof Classroom && !o.teacher && o.validate());
+        let possible = regions.allRegions.filter(o => o instanceof Classroom && !o.hasTeacher);
 
         if (possible.length == 0)
             return;
 
         this._room = possible[0] as Classroom;
-        this._room.teacher = this.entity;
+        this._room.setTeacher(this.entity);
+
+        this._walk();
     }
 }
 

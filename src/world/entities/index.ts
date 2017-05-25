@@ -41,9 +41,6 @@ export function removeEntity(entity: Entity) {
     events.emit('change', entity.position);
 }
 
-export function update(pos: Vector) {
-}
-
 app.hook('init', 'entities', () => {
     camera.addObject(container, 100);
 
@@ -59,21 +56,25 @@ app.hook('init', 'entities', () => {
     let entity4 = new Builder(new Vector(53.5, 50.5));
     addEntity(entity4);
 
-    let student1 = new Student(new Vector(50.5, 51.5));
-    addEntity(student1);
+    // let student1 = new Student(new Vector(50.5, 51.5));
+    // addEntity(student1);
 
-    let student2 = new Student(new Vector(51.5, 51.5));
-    addEntity(student2);
+    // let student2 = new Student(new Vector(51.5, 51.5));
+    // addEntity(student2);
 
-    let student3 = new Student(new Vector(52.5, 51.5));
-    addEntity(student3);
+    // let student3 = new Student(new Vector(52.5, 51.5));
+    // addEntity(student3);
 
-    let student4 = new Student(new Vector(53.5, 51.5));
-    addEntity(student4);
+    // let student4 = new Student(new Vector(53.5, 51.5));
+    // addEntity(student4);
 });
-
 app.hook('update', 'entities', dT => {
+    let salary = 0;
     for (let entity of allEntities) {
         entity.update(dT);
+        salary += entity.salary;
     }
+
+    let delta = salary * dT / 10;
+    world.setCash(world.cash - delta);
 })

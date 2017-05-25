@@ -19,6 +19,8 @@ export function load(path: string, callback: (tex: pixi.Texture) => void) {
     pixi.loader.on('complete', () => {
         let texture = pixi.loader.resources[sprite].texture;
 
+        texture.baseTexture.scaleMode = pixi.SCALE_MODES.NEAREST;
+
         callback(texture);
     });
 }

@@ -14,6 +14,8 @@ interface Events {
 
 class Entity extends EventEmitter<Events> {
     public readonly container = new pixi.Container();
+
+    public salary = 0;
     
     private _position: Vector;
 

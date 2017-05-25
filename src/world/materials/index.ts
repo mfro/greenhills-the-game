@@ -229,7 +229,7 @@ export const LOCKERS = new ObjectMaterial({
     width: 1,
     height: 1,
     type: Lockers,
-    texture: 'objects/lockers.png',
+    texture: 'objects/locker.png',
 
     cost: 200
 });
