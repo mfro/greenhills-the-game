@@ -105,7 +105,7 @@ class Teacher extends WalkingEntity {
 
         new TeacherAI(this);
 
-        let male = rand(1) == 1;
+        let male = rand(2) == 1;
 
         let headIndex = rand(3);
         let hairIndex = rand(4);
@@ -117,6 +117,7 @@ class Teacher extends WalkingEntity {
 
         let t = 33;
 
+        debugger;
         let rects = [
             new pixi.Rectangle(bodyIndex * t, (8 + bodySize) * t, t, t),
             new pixi.Rectangle(headIndex * t, 0 * t, t, t),

@@ -60,6 +60,8 @@ app.hook('init', 'gui-toolbar', () => {
     objects.addItem(new MaterialToolbarItem(materials.BOOKSHELF));
     objects.addItem(new MaterialToolbarItem(materials.SINK));
     
+    objects.addItem(new MaterialToolbarItem(materials.FIELD));
+    
     objects.addItem(new MaterialToolbarItem(materials.BULLDOZER));
 
     let rooms = new ToolbarMenu('Rooms', 3);

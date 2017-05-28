@@ -24,6 +24,8 @@ import ComputerTable from 'world/objects/computerTable';
 import Lockers from 'world/objects/lockers';
 import LunchTable from 'world/objects/lunchTable';
 
+import Field from 'world/objects/field';
+
 export {
     Material as Base,
 
@@ -245,6 +247,19 @@ export const SINK = new ObjectMaterial({
 
     cost: 100
 });
+
+export const FIELD = new ObjectMaterial({
+    id: 'FIELD',
+    name: 'Game field',
+
+    width: 10,
+    height: 20,
+    type: Field,
+    texture: 'objects/field.png',
+
+    cost: 10000
+});
+
 
 export const BULLDOZER = new ObjectMaterial({
     id: 'BULLDOZER',

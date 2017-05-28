@@ -9,3 +9,5 @@ import './gui';
 import './world';
 
 import './construction';
+
+document.title = 'Greenhills the Game';
